@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>إتمام الطلب — تاني</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;500;600;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<style>
+      :root{
+    --pine-900:#0B2621; --pine-800:#10352E; --pine-700:#16453C; --pine-600:#1D5A4E;
+    --accent-600:#C8431F; --accent-500:#E0522C; --accent-050:#FCEDE8;
+    --sand-050:#FAF8F4; --sand-100:#F2EFE8; --sand-200:#E7E2D8; --sand-300:#D6CFC1;
+    --ink-900:#14171A; --ink-600:#4E535A; --ink-400:#858B94; --ink-300:#A8ADB5;
+    --ok-700:#175C41; --ok-600:#1F6B4D; --ok-050:#E8F3ED;
+    --warn-700:#7A5510; --warn-050:#FBF1DF;
+    --surface:#FFFFFF; --on-dark:#F2F0EA; --on-dark-60:rgba(242,240,234,.62);
+    --line:#E4DFD5; --line-strong:#D2CCBE; --line-dark:rgba(242,240,234,.14);
+    --s1:.25rem; --s2:.5rem; --s3:.75rem; --s4:1rem; --s5:1.5rem; --s6:2rem; --s7:3rem; --s8:4rem;
+    --r1:6px; --r2:10px; --r3:14px; --rp:999px;
+    --sh1:0 1px 2px rgba(20,23,26,.06);
+    --sh2:0 4px 14px rgba(20,23,26,.08);
+    --sh3:0 14px 34px rgba(20,23,26,.13);
+    --t-xs:.75rem; --t-sm:.8125rem; --t-base:.9375rem; --t-md:1.0625rem; --t-lg:1.375rem; --t-xl:1.875rem;
+
+    /* legacy aliases so existing rules keep working */
+    --paper:var(--sand-050); --paper-2:var(--sand-100);
+    --leaf:var(--pine-800); --tea:var(--accent-500); --tea-dark:var(--accent-600);
+    --mint:var(--ok-600); --brass:#C99A22;
+    --ink:var(--ink-900); --ink-soft:var(--ink-600);
+    --rule:var(--line); --danger:var(--accent-600);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Tajawal',system-ui,sans-serif;background:var(--paper);
+    color:var(--ink);line-height:1.75;-webkit-font-smoothing:antialiased;
+    min-height:100vh;display:flex;flex-direction:column;
+  }
+  .wrap{width:min(1000px,100% - 3rem);margin-inline:auto}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--tea);outline-offset:3px;border-radius:var(--r1)}
+  .eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.18em;color:var(--ink-soft)}
+
+  .masthead{background:var(--paper);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:50}
+  .masthead-in{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding-block:.85rem}
+  .mi{width:14px;height:14px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:-2px}
+  .logo-mk{width:30px;height:30px;border-radius:var(--r1);background:var(--accent-500);display:inline-grid;place-items:center;vertical-align:-8px;margin-inline-end:.45rem}
+  .logo-mk svg{width:17px;height:17px;display:block}
+  .wordmark{font-family:'Changa',sans-serif;font-size:1.6rem;color:var(--leaf);text-decoration:none;line-height:1}
+  .wordmark b{color:var(--tea);font-weight:400}
+  .back{text-decoration:none;font-size:.88rem;font-weight:500;color:var(--ink-soft);display:inline-flex;align-items:center;gap:.45rem;transition:color .2s}
+  .back:hover{color:var(--tea)}
+  .back svg{width:15px;height:15px;flex:none}
+
+  .steps{border-bottom:1px solid var(--rule);background:var(--paper-2)}
+  .steps ol{display:flex;list-style:none;gap:.5rem;padding-block:.9rem;flex-wrap:wrap;align-items:center}
+  .steps li{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--ink-soft)}
+  .steps li b{
+    font-family:'Changa',sans-serif;font-weight:400;width:24px;height:24px;border-radius:50%;
+    display:grid;place-items:center;font-size:.9rem;border:1.5px solid var(--rule);color:var(--ink-soft);line-height:1;
+  }
+  .steps li.done b{background:var(--mint);border-color:var(--mint);color:#fff}
+  .steps li[aria-current]{color:var(--leaf);font-weight:600}
+  .steps li[aria-current] b{background:var(--tea);border-color:var(--tea);color:var(--paper)}
+  .steps .sep{width:22px;height:1px;background:var(--rule)}
+
+  main{flex:1;padding-block:clamp(2.2rem,5vw,3.4rem)}
+  h1{font-size:clamp(1.6rem,3.4vw,2.2rem);font-weight:600;color:var(--leaf);margin-top:.5rem;letter-spacing:-.01em}
+
+  .layout{display:grid;grid-template-columns:1.5fr 1fr;gap:clamp(1.6rem,4vw,3rem);margin-top:2.2rem;align-items:start}
+
+  fieldset{border:0;margin-bottom:2.4rem}
+  legend{
+    font-size:.72rem;font-weight:700;letter-spacing:.16em;color:var(--brass);
+    padding-bottom:.9rem;margin-bottom:1.4rem;border-bottom:1.5px solid var(--leaf);width:100%;
+  }
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+  .field{margin-bottom:1.1rem}
+  .field.full{grid-column:1 / -1}
+  label{display:block;font-size:.85rem;font-weight:500;color:var(--leaf);margin-bottom:.4rem}
+  label .opt{font-weight:300;color:var(--ink-soft);font-size:.78rem}
+  input[type=text],input[type=tel],select,textarea{
+    width:100%;font-family:inherit;font-size:.95rem;color:var(--ink);
+    background:#fff;border:1.5px solid var(--rule);border-radius:var(--r1);
+    padding:.7rem .85rem;transition:border-color .2s,box-shadow .2s;
+  }
+  textarea{resize:vertical;min-height:78px;line-height:1.7}
+  select{cursor:pointer;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-soft) 50%),linear-gradient(135deg,var(--ink-soft) 50%,transparent 50%);background-position:left 1rem top 1.15rem,left .7rem top 1.15rem;background-size:5px 5px;background-repeat:no-repeat}
+  input:focus,select:focus,textarea:focus{outline:0;border-color:var(--tea);box-shadow:0 0 0 3px rgba(166,59,24,.11)}
+  input.bad,select.bad,textarea.bad{border-color:var(--danger);background:#FDF4F1}
+  .err{font-size:.78rem;color:var(--danger);margin-top:.35rem;display:none;font-weight:500}
+  .err.show{display:block}
+  .hint{font-size:.78rem;color:var(--ink-soft);font-weight:300;margin-top:.35rem}
+
+  /* payment */
+  .pay{display:grid;gap:.9rem}
+  .pay-opt{
+    border:1.5px solid var(--rule);border-radius:var(--r1);background:#fff;
+    padding:1.1rem 1.2rem;cursor:pointer;display:block;transition:border-color .22s,background .22s;
+  }
+  .pay-opt:hover{border-color:var(--brass)}
+  .pay-opt.sel{border-color:var(--tea);background:#FFFAF7}
+  .pay-head{display:flex;align-items:center;gap:.85rem}
+  .pay-head input{accent-color:var(--tea);width:17px;height:17px;flex:none;cursor:pointer}
+  .pay-mark{
+    width:42px;height:30px;border-radius:var(--r1);display:grid;place-items:center;flex:none;
+    font-size:.58rem;font-weight:700;letter-spacing:.02em;line-height:1.1;text-align:center;
+  }
+  .mark-vf{background:#E60000;color:#fff}
+  .mark-cod{background:var(--leaf);color:var(--brass)}
+  .pay-title{font-size:.98rem;font-weight:600;color:var(--leaf);line-height:1.3}
+  .pay-sub{font-size:.8rem;color:var(--ink-soft);font-weight:300}
+  .pay-body{
+    display:none;margin-top:1.1rem;padding-top:1.1rem;border-top:1px dashed var(--rule);
+  }
+  .pay-opt.sel .pay-body{display:block;animation:slideIn .3s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+  .wallet{
+    background:var(--paper-2);border-radius:var(--r1);padding:.9rem 1rem;
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;
+  }
+  .wallet-num{
+    font-family:'Tajawal',sans-serif;font-size:1.15rem;font-weight:600;
+    color:var(--leaf);letter-spacing:.06em;direction:ltr;font-variant-numeric:tabular-nums;
+  }
+  .wallet small{display:block;font-size:.7rem;letter-spacing:.1em;color:var(--ink-soft);font-weight:500}
+  .copy-btn{
+    background:none;border:1.5px solid var(--leaf);color:var(--leaf);font-family:inherit;
+    font-size:.78rem;font-weight:600;padding:.4rem 1rem;border-radius:var(--r1);cursor:pointer;transition:.2s;
+  }
+  .copy-btn:hover{background:var(--leaf);color:var(--paper)}
+  .copy-btn.ok{background:var(--mint);border-color:var(--mint);color:#fff}
+  .steps-mini{list-style:none;counter-reset:s;margin-bottom:1rem}
+  .steps-mini li{
+    counter-increment:s;position:relative;padding-inline-start:1.9rem;
+    font-size:.85rem;font-weight:300;color:var(--ink-soft);margin-bottom:.45rem;
+  }
+  .steps-mini li::before{
+    content:counter(s);position:absolute;inset-inline-start:0;top:.32rem;
+    width:19px;height:19px;border-radius:50%;background:var(--leaf);color:var(--paper);
+    font-size:.68rem;font-weight:600;display:grid;place-items:center;line-height:1;
+  }
+  .notice{
+    background:var(--paper-2);border-inline-start:3px solid var(--brass);
+    padding:.85rem 1rem;font-size:.84rem;font-weight:300;color:var(--ink-soft);border-radius:var(--r1);
+  }
+  .notice b{color:var(--leaf);font-weight:600}
+
+  /* receipt upload */
+  .drop{
+    display:flex;align-items:center;gap:.85rem;cursor:pointer;
+    border:1.5px dashed var(--rule);border-radius:var(--r1);background:var(--paper-2);
+    padding:1rem 1.1rem;transition:border-color .2s,background .2s;
+  }
+  .drop:hover,.drop.over{border-color:var(--tea);background:#FFF8F5}
+  .drop.bad{border-color:var(--danger);background:#FDF4F1}
+  .drop-icon{font-size:1.6rem;flex:none;line-height:1}
+  .drop-txt{font-size:.86rem;font-weight:300;color:var(--ink-soft);line-height:1.5}
+  .drop-txt b{color:var(--leaf);font-weight:600;font-size:.9rem}
+  .drop-txt small{font-size:.76rem}
+  .preview{display:none;margin-top:.8rem}
+  .preview.show{display:block}
+  .pv-card{
+    display:flex;align-items:center;gap:.85rem;background:#fff;
+    border:1.5px solid var(--mint);border-radius:var(--r1);padding:.7rem .85rem;
+  }
+  .pv-thumb{
+    width:52px;height:52px;object-fit:cover;border-radius:var(--r1);flex:none;
+    border:1px solid var(--rule);background:var(--paper-2);
+  }
+  .pv-meta{flex:1;min-width:0}
+  .pv-name{font-size:.85rem;font-weight:500;color:var(--leaf);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pv-size{font-size:.75rem;color:var(--ink-soft);font-weight:300}
+  .pv-ok{font-size:.72rem;color:var(--mint);font-weight:600}
+  .pv-del{
+    background:none;border:1.5px solid var(--rule);color:var(--ink-soft);
+    font-family:inherit;font-size:.76rem;padding:.35rem .8rem;border-radius:var(--r1);
+    cursor:pointer;flex:none;transition:.2s;
+  }
+  .pv-del:hover{border-color:var(--danger);color:var(--danger)}
+
+  /* summary */
+  .summary{background:var(--leaf);color:var(--paper);padding:1.8rem 1.6rem;border-radius:var(--r1);position:sticky;top:88px}
+  .summary h2{font-size:.72rem;font-weight:700;letter-spacing:.16em;color:var(--brass);margin-bottom:1.3rem}
+  .mini{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;font-weight:300;margin-bottom:.7rem;color:rgba(242,236,221,.8)}
+  .mini em{font-style:normal;color:rgba(242,236,221,.5);font-size:.8rem}
+  .mini b{font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .sum-rows{border-top:1px solid rgba(242,236,221,.18);margin-top:1.2rem;padding-top:1.2rem}
+  .sum-row{display:flex;justify-content:space-between;gap:1rem;font-size:.9rem;font-weight:300;margin-bottom:.65rem;color:rgba(242,236,221,.75)}
+  .sum-row b{font-weight:500;color:var(--paper);font-variant-numeric:tabular-nums}
+  .sum-row.free b{color:var(--mint)}
+  .sum-total{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;border-top:1px solid rgba(242,236,221,.18);margin-top:1rem;padding-top:1.1rem}
+  .sum-total span{font-size:.9rem;color:rgba(242,236,221,.7);font-weight:300}
+  .sum-total b{font-family:'Changa',sans-serif;font-weight:400;font-size:1.9rem;color:var(--brass);font-variant-numeric:tabular-nums}
+
+  .btn-go{
+    display:block;width:100%;text-align:center;background:var(--tea);color:var(--paper);
+    font-family:inherit;font-size:.98rem;font-weight:600;padding:.95rem 1rem;border:0;border-radius:var(--r1);
+    margin-top:1.5rem;cursor:pointer;transition:background .22s,transform .22s;
+  }
+  .btn-go:hover:not(:disabled){background:#BF4720;transform:translateY(-1px)}
+  .btn-go:disabled{opacity:.6;cursor:wait}
+  .safe-note{font-size:.76rem;color:rgba(242,236,221,.5);font-weight:300;text-align:center;margin-top:.9rem}
+
+  /* confirmation */
+  .done-box{max-width:52ch;margin-inline:auto;text-align:center;padding-block:clamp(2.4rem,6vw,4rem)}
+  .tick{width:62px;height:62px;border-radius:50%;background:var(--mint);display:grid;place-items:center;margin:0 auto 1.5rem;animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+  .tick svg{width:30px;height:30px;stroke:#fff;stroke-width:2.6;fill:none}
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  .done-box h1{font-family:'Changa',sans-serif;font-weight:400;font-size:clamp(1.9rem,5vw,2.7rem);margin-bottom:.6rem}
+  .done-box > p{color:var(--ink-soft);font-weight:300;margin-bottom:1.8rem}
+  .ref{
+    display:inline-block;background:var(--leaf);color:var(--brass);padding:.6rem 1.6rem;border-radius:var(--r1);
+    font-size:1.15rem;font-weight:600;letter-spacing:.1em;margin-bottom:2rem;direction:ltr;
+  }
+  .ref small{display:block;font-size:.62rem;letter-spacing:.14em;color:rgba(242,236,221,.5);font-weight:500}
+  .recap{text-align:start;border-top:1px solid var(--rule);padding-top:1.4rem;margin-bottom:2rem}
+  .recap div{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;padding-block:.5rem;border-bottom:1px solid var(--rule);font-weight:300;color:var(--ink-soft)}
+  .recap div b{color:var(--leaf);font-weight:500;text-align:end}
+  .btn-solid{background:var(--tea);color:var(--paper);text-decoration:none;font-size:.95rem;font-weight:600;padding:.85rem 2rem;border-radius:var(--r1);display:inline-block;transition:background .22s,transform .22s}
+  .btn-solid:hover{background:#BF4720;transform:translateY(-1px)}
+
+  .empty{text-align:center;padding-block:4rem;max-width:42ch;margin-inline:auto}
+  .empty h2{font-family:'Changa',sans-serif;font-weight:400;font-size:2rem;color:var(--leaf);margin-bottom:.5rem}
+  .empty p{color:var(--ink-soft);font-weight:300;margin-bottom:1.8rem}
+
+  footer{background:var(--leaf);color:rgba(242,236,221,.42);padding-block:1.5rem;font-size:.8rem;margin-top:auto}
+  .foot-in{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+
+  @media(max-width:840px){
+    .layout{grid-template-columns:1fr}
+    .summary{position:static}
+  }
+  @media(max-width:560px){
+    .wrap{width:min(1000px,100% - 2.2rem)}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  }
+
+  /* ── MAP SECTION ── */
+  .map-block{margin-top:1.2rem;border:1.5px solid var(--rule);border-radius:var(--r1);overflow:hidden;background:#fff}
+
+  /* header row: geocode status + GPS button */
+  .map-header{
+    display:flex;align-items:center;justify-content:space-between;gap:.8rem;
+    padding:.7rem 1rem;background:var(--paper-2);border-bottom:1px solid var(--rule);flex-wrap:wrap;
+  }
+  .map-status{display:flex;align-items:center;gap:.55rem;font-size:.82rem;font-weight:400;color:var(--ink-soft)}
+  .map-status svg{flex:none;width:16px;height:16px}
+  .map-status.searching .dot{animation:pulse 1s infinite}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--rule);flex:none;transition:background .3s}
+  .dot.found{background:var(--mint)}
+  .dot.warn{background:var(--brass)}
+  .dot.err{background:var(--danger)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  /* GPS button */
+  .gps-btn{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:var(--leaf);color:var(--paper);
+    font-family:inherit;font-size:.8rem;font-weight:600;
+    padding:.45rem 1rem;border:0;border-radius:var(--r1);cursor:pointer;
+    transition:background .2s,transform .15s;white-space:nowrap;flex:none;
+  }
+  .gps-btn:hover{background:#1e3a27;transform:translateY(-1px)}
+  .gps-btn:active{transform:translateY(0)}
+  .gps-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none;flex:none}
+  .gps-btn.loading svg{animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  #map{height:300px;width:100%;direction:ltr}
+
+  /* coords bar */
+  .map-coords{
+    display:none;align-items:center;justify-content:space-between;gap:.6rem;
+    padding:.55rem 1rem;background:var(--leaf);flex-wrap:wrap;
+  }
+  .map-coords.show{display:flex}
+  .map-coords-txt{font-size:.78rem;font-weight:300;color:rgba(242,236,221,.8)}
+  .map-coords-txt b{color:var(--brass);direction:ltr;display:inline-block;font-variant-numeric:tabular-nums}
+  .coord-actions{display:flex;gap:.5rem;align-items:center}
+  .gmaps-btn{
+    display:inline-flex;align-items:center;gap:.35rem;
+    background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,.25);
+    color:var(--paper);font-family:inherit;font-size:.72rem;font-weight:500;
+    padding:.28rem .75rem;border-radius:var(--r1);cursor:pointer;text-decoration:none;transition:.2s;
+  }
+  .gmaps-btn:hover{background:rgba(255,255,255,.18)}
+  .coord-clear{
+    background:none;border:1px solid rgba(242,236,221,.25);color:rgba(242,236,221,.6);
+    font-family:inherit;font-size:.72rem;padding:.28rem .65rem;border-radius:var(--r1);cursor:pointer;transition:.2s;
+  }
+  .coord-clear:hover{background:rgba(242,236,221,.1);color:var(--paper)}
+
+  /* soft warning shown when address typed but no pin yet */
+  .map-nudge{
+    display:none;margin-top:.65rem;
+    background:#FFF8EE;border:1.5px solid var(--brass);border-radius:var(--r1);
+    padding:.7rem 1rem;font-size:.82rem;font-weight:400;color:#6B4C0A;
+    align-items:center;gap:.6rem;
+  }
+  .map-nudge.show{display:flex}
+  .map-nudge svg{flex:none;width:16px;height:16px;stroke:#B08344;stroke-width:2;fill:none}
+  .leaflet-container{font-family:'Tajawal',sans-serif}
+
+
+  /* ── system alignment ── */
+  body{font-size:var(--t-base);line-height:1.7}
+  .wordmark{font-family:'Changa',sans-serif;font-weight:700}
+  h1,h2,h3{font-family:'Changa',sans-serif;font-weight:700;line-height:1.28}
+  input,select,textarea{border-radius:var(--r1)}
+  input:focus,select:focus,textarea:focus{border-color:var(--pine-700)}
+  ::selection{background:var(--pine-700);color:var(--on-dark)}
+  :focus-visible{outline:2px solid var(--accent-500);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap masthead-in">
+    <a href="index.html" class="wordmark"><span class="logo-mk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13l-3.2-3.2M20 15H7l3.2 3.2"/></svg></span>تاني</a>
+    <a href="cart.html" class="back">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M6 3 L11 8 L6 13" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      ارجع للسلة
+    </a>
+  </div>
+</header>
+
+<nav class="steps" aria-label="خطوات الطلب" id="stepNav">
+  <div class="wrap">
+    <ol>
+      <li class="done"><b>١</b> السلة</li>
+      <span class="sep"></span>
+      <li aria-current="step"><b>٢</b> البيانات والدفع</li>
+      <span class="sep"></span>
+      <li><b>٣</b> التأكيد</li>
+    </ol>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <div id="root"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>© ٢٠٢٦ تاني</span>
+    <span>لأي استفسار: ٠١٠٠٠٠٠٠٠٠٠</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="tani-supabase.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  var FREE_SHIPPING_AT = 3000;
+  var SHIPPING_FEE = 60;
+  var COD_FEE = 15;
+  var WALLET = '01066343688';
+
+  /* listings are user-generated — read them live from the shared store */
+  var COUNTRY = { EG:{ name:'مصر', cur:'ج.م' }, SA:{ name:'السعودية', cur:'ر.س' } };
+  var COND_LBL = { new:'زي الجديدة', good:'كويسة', used:'مستعملة' };
+
+  function allListings(){
+    return (window.TaniDB && window.TaniDB.listings) || [];
+  }
+  function lookup(id){
+    return allListings().filter(function(l){ return l.id === id; })[0] || null;
+  }
+  function curOf(l){ return (l && COUNTRY[l.market]) ? COUNTRY[l.market].cur : 'ج.م'; }
+  function orderCur(){
+    var it = Store.read().filter(function(x){ return lookup(x.id); })[0];
+    return it ? curOf(lookup(it.id)) : 'ج.م';
+  }
+
+  var GOVS = ['القاهرة','الجيزة','القليوبية','الإسكندرية','المنوفية','الغربية','الدقهلية',
+    'الشرقية','البحيرة','كفر الشيخ','دمياط','بورسعيد','الإسماعيلية','السويس','بني سويف',
+    'الفيوم','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر','مطروح',
+    'شمال سيناء','جنوب سيناء','الوادي الجديد'];
+
+  var mem = null;
+  var Store = {
+    read:function(){
+      try{
+        var raw = window.localStorage.getItem('tani_cart');
+        return raw ? JSON.parse(raw) : [];
+      }catch(e){ return mem || []; }
+    },
+    clear:function(){
+      mem = [];
+      try{ window.localStorage.removeItem('tani_cart'); }catch(e){}
+    }
+  };
+
+  var AR=['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+  function toAr(n){ return String(n).replace(/\d/g,function(d){return AR[+d];}); }
+
+  var root = document.getElementById('root');
+  var items = [];
+
+  root.innerHTML = '<p style="color:var(--ink-400);padding:var(--s6) 0">بنحمّل بيانات الطلب…</p>';
+  (window.TaniDB ? window.TaniDB.ready : Promise.resolve())
+    .then(function(){
+      var ids = Store.read().map(function(x){ return x.id; });
+      return window.TaniDB ? window.TaniDB.fetchByIds(ids) : null;
+    })
+    .then(boot).catch(boot);
+
+  function boot(){
+  items = Store.read().filter(function(it){ return lookup(it.id); });
+
+  function totals(method){
+    var sub = items.reduce(function(s,it){ var p=lookup(it.id); return s + (p?p.price:0); },0);
+    var ship = sub >= FREE_SHIPPING_AT ? 0 : SHIPPING_FEE;
+    var cod  = method === 'cod' ? COD_FEE : 0;
+    return { sub:sub, ship:ship, cod:cod, total:sub+ship+cod };
+  }
+
+  if (!items.length){
+    root.innerHTML = '<div class="empty"><h2>السلة فاضية</h2>'
+      + '<p>مينفعش تكمّل الطلب من غير ما تختار حاجة الأول.</p>'
+      + '<a href="index.html#browse" class="btn-solid">اتفرج على المعروض</a></div>';
+    return;
+  }
+
+  /* ── build the page ── */
+  var miniRows = items.map(function(it){
+    var p = lookup(it.id);
+    return '<div class="mini"><span>' + p.title + ' <em>' + (COND_LBL[p.cond]||'') + '</em></span>'
+      + '<b>' + toAr(p.price) + ' ' + curOf(p) + '</b></div>';
+  }).join('');
+
+  var govOpts = GOVS.map(function(g){ return '<option value="' + g + '">' + g + '</option>'; }).join('');
+
+  root.innerHTML =
+    '<p class="eyebrow">الخطوة التانية</p>'
+    + '<h1>بيانات التوصيل والدفع</h1>'
+    + '<div class="layout">'
+      + '<form id="form" novalidate>'
+
+        + '<fieldset><legend>بيانات المستلم</legend>'
+          + '<div class="grid2">'
+            + '<div class="field"><label for="name">الاسم بالكامل</label>'
+              + '<input type="text" id="name" name="name" autocomplete="name" />'
+              + '<p class="err" id="e-name"></p></div>'
+            + '<div class="field"><label for="phone">رقم الموبايل</label>'
+              + '<input type="tel" id="phone" name="phone" inputmode="numeric" placeholder="01xxxxxxxxx" autocomplete="tel" />'
+              + '<p class="err" id="e-phone"></p></div>'
+            + '<div class="field"><label for="phone2">رقم تاني <span class="opt">(اختياري)</span></label>'
+              + '<input type="tel" id="phone2" name="phone2" inputmode="numeric" placeholder="01xxxxxxxxx" />'
+              + '<p class="err" id="e-phone2"></p></div>'
+            + '<div class="field"><label for="gov">المحافظة</label>'
+              + '<select id="gov" name="gov"><option value="">اختار المحافظة</option>' + govOpts + '</select>'
+              + '<p class="err" id="e-gov"></p></div>'
+            + '<div class="field full"><label for="address">العنوان بالتفصيل</label>'
+              + '<textarea id="address" name="address" placeholder="مثال: مدينة نصر، الحي العاشر، شارع مصطفى النحاس، بجوار مسجد النور، عمارة ١٤ الدور ٣"></textarea>'+ '<p class="hint">اكتب <b>علامة مميزة</b> قريبة منك (مسجد، صيدلية، مول) — دي أدق حاجة تساعد المندوب.</p>'
+              + '<p class="err" id="e-address"></p>'
+              + '<div class="map-nudge" id="mapNudge">'
+                + '<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><line x1="8" y1="6" x2="8" y2="8.5"/><line x1="8" y1="9.5" x2="8" y2="10.5"/></svg>'
+                + '<span>عشان المندوب يوصلك بدقة، يفضّل تحدد موقعك على الخريطة تحت أو تضغط زرار الـ GPS</span>'
+              + '</div>'
+              + '<div class="map-block" id="mapBlock">'
+                + '<div class="map-header">'
+                  + '<div class="map-status" id="mapStatus"><span class="dot" id="mapDot"></span><span id="mapStatusTxt">اكتب عنوانك وهيتحدد الموقع تلقائياً</span></div>'
+                  + '<button type="button" class="gps-btn" id="gpsBtn">'
+                    + '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>'
+                    + 'موقعي الحالي'
+                  + '</button>'
+                + '</div>'
+                + '<div id="map"></div>'
+                + '<div class="map-coords" id="mapCoords">'
+                  + '<span class="map-coords-txt"><svg class=\"mi\" viewBox=\"0 0 24 24\"><path d=\"M12 21s6-5.4 6-10a6 6 0 10-12 0c0 4.6 6 10 6 10z\"/><circle cx=\"12\" cy=\"11\" r=\"2.2\"/></svg> <b id="coordTxt"></b></span>'
+                  + '<div class="coord-actions">'
+                    + '<a class="gmaps-btn" id="gmapsLink" href="#" target="_blank"><svg class=\"mi\" viewBox=\"0 0 24 24\"><path d=\"M9 4L3 6.5v14L9 18l6 2.5 6-2.5v-14L15 6.5z\"/><path d=\"M9 4v14M15 6.5v14\"/></svg> افتح في Google Maps</a>'
+                    + '<button type="button" class="coord-clear" id="coordClear">× مسح</button>'
+                  + '</div>'
+                + '</div>'
+              + '</div>'
+              + '<input type="hidden" id="mapLat" name="mapLat" />'
+              + '<input type="hidden" id="mapLng" name="mapLng" />'
+            + '</div>'
+            + '<div class="field full"><label for="notes">ملاحظات للمندوب <span class="opt">(اختياري)</span></label>'
+              + '<textarea id="notes" name="notes" placeholder="علامة مميزة، أو أنسب وقت للتوصيل"></textarea></div>'
+          + '</div>'
+        + '</fieldset>'
+
+        + '<fieldset><legend>طريقة الدفع</legend>'
+          + '<div class="pay">'
+
+            + '<label class="pay-opt" data-method="vodafone">'
+              + '<span class="pay-head">'
+                + '<input type="radio" name="method" value="vodafone" />'
+                + '<span class="pay-mark mark-vf">فودافون<br>كاش</span>'
+                + '<span><span class="pay-title">فودافون كاش</span>'
+                + '<span class="pay-sub">حوّل المبلغ وارفع صورة التحويل</span></span>'
+              + '</span>'
+              + '<span class="pay-body">'
+                + '<span class="wallet">'
+                  + '<span><small>حوّل على المحفظة دي</small><span class="wallet-num">' + WALLET + '</span></span>'
+                  + '<button type="button" class="copy-btn" id="copyBtn">انسخ الرقم</button>'
+                + '</span>'
+                + '<ol class="steps-mini">'
+                  + '<li>افتح تطبيق فودافون كاش أو اطلب <b>*٩#</b></li>'
+                  + '<li>حوّل إجمالي الطلب على الرقم اللي فوق</li>'
+                  + '<li>صوّر شاشة التحويل (Screenshot) وارفعها تحت</li>'
+                + '</ol>'
+
+                + '<span class="field" style="display:block;margin-bottom:1rem">'
+                  + '<label for="receipt">صورة التحويل <span style="color:var(--danger)">*</span></label>'
+                  + '<span class="drop" id="drop">'
+                    + '<span class="drop-icon"><svg class=\"mi\" viewBox=\"0 0 24 24\"><path d=\"M6 3h12v18l-3-2-3 2-3-2-3 2z\"/><path d=\"M9 8h6M9 12h6\"/></svg></span>'
+                    + '<span class="drop-txt"><b>اضغط هنا لرفع الصورة</b><br><small>أو اسحب الصورة ورميها هنا — JPG أو PNG، أقل من ٥ ميجا</small></span>'
+                  + '</span>'
+                  + '<input type="file" id="receipt" name="receipt" accept="image/*" hidden />'
+                  + '<span class="preview" id="preview"></span>'
+                  + '<span class="hint">الصورة إجبارية عشان نتأكد من التحويل — بنراجعها خلال ساعة ونبعتلك تأكيد على واتساب.</span>'
+                  + '<span class="err" id="e-receipt"></span>'
+                + '</span>'
+
+                + '<span class="field" style="display:block;margin-bottom:0">'
+                  + '<label for="txn">رقم العملية <span class="opt">(اختياري)</span></label>'
+                  + '<input type="text" id="txn" name="txn" inputmode="numeric" placeholder="لو ظاهر في الرسالة اكتبه" />'
+                + '</span>'
+              + '</span>'
+            + '</label>'
+
+            + '<label class="pay-opt" data-method="cod">'
+              + '<span class="pay-head">'
+                + '<input type="radio" name="method" value="cod" />'
+                + '<span class="pay-mark mark-cod">دفع عند<br>الاستلام</span>'
+                + '<span><span class="pay-title">الدفع عند الاستلام</span>'
+                + '<span class="pay-sub">تدفع كاش للمندوب وقت التسليم</span></span>'
+              + '</span>'
+              + '<span class="pay-body">'
+                + '<span class="notice">'
+                  + 'بيتضاف <b>' + toAr(COD_FEE) + ' ' + orderCur() + '</b> رسوم تحصيل على الطلبات اللي بتتدفع عند الاستلام. '
+                  + 'يفضّل يكون معاك المبلغ بالظبط، المندوب مش دايماً بيكون معاه فكة.'
+                + '</span>'
+              + '</span>'
+            + '</label>'
+
+          + '</div>'
+          + '<p class="err" id="e-method" style="margin-top:.8rem"></p>'
+        + '</fieldset>'
+      + '</form>'
+
+      + '<aside class="summary">'
+        + '<h2>ملخص الطلب</h2>'
+        + miniRows
+        + '<div class="sum-rows" id="sumRows"></div>'
+        + '<div class="sum-total"><span>الإجمالي</span><b id="grand">—</b></div>'
+        + '<button type="submit" form="form" class="btn-go" id="submitBtn">أكّد الطلب</button>'
+        + '<p class="safe-note">مفيش أي بيانات بنك بتتخزن عندنا.</p>'
+      + '</aside>'
+    + '</div>';
+
+  /* ── payment selection ── */
+  var opts = root.querySelectorAll('.pay-opt');
+  var method = '';
+
+  function selectMethod(m){
+    method = m;
+    opts.forEach(function(o){
+      var on = o.getAttribute('data-method') === m;
+      o.classList.toggle('sel', on);
+      o.querySelector('input[type=radio]').checked = on;
+    });
+    clearErr('method');
+    paintTotals();
+  }
+
+  opts.forEach(function(o){
+    o.addEventListener('click', function(){ selectMethod(o.getAttribute('data-method')); });
+    o.addEventListener('keydown', function(e){
+      if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); selectMethod(o.getAttribute('data-method')); }
+    });
+  });
+
+  function paintTotals(){
+    var t = totals(method);
+    var cur = orderCur();
+    var html = '<div class="sum-row"><span>إجمالي القطع</span><b>' + toAr(t.sub) + ' ' + cur + '</b></div>';
+    html += t.ship === 0
+      ? '<div class="sum-row free"><span>التوصيل</span><b>مجاني</b></div>'
+      : '<div class="sum-row"><span>التوصيل</span><b>' + toAr(t.ship) + ' ' + cur + '</b></div>';
+    if (t.cod) html += '<div class="sum-row"><span>رسوم التحصيل</span><b>' + toAr(t.cod) + ' ' + cur + '</b></div>';
+    document.getElementById('sumRows').innerHTML = html;
+    document.getElementById('grand').textContent = toAr(t.total) + ' ' + cur;
+  }
+  paintTotals();
+
+  /* ── copy wallet ── */
+  var copyBtn = document.getElementById('copyBtn');
+  copyBtn.addEventListener('click', function(e){
+    e.preventDefault(); e.stopPropagation();
+    var plain = WALLET.replace(/\s/g,'');
+    var done = function(){
+      copyBtn.textContent = 'اتنسخ';
+      copyBtn.classList.add('ok');
+      setTimeout(function(){ copyBtn.textContent='انسخ الرقم'; copyBtn.classList.remove('ok'); }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(plain).then(done, done);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = plain; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); }catch(err){}
+      document.body.removeChild(ta); done();
+    }
+  });
+
+  /* ── receipt upload (Vodafone Cash) ── */
+  var MAX_MB = 5;
+  var receiptFile = null;
+  var dropEl    = document.getElementById('drop');
+  var receiptEl = document.getElementById('receipt');
+  var previewEl = document.getElementById('preview');
+
+  function fmtSize(bytes){
+    return bytes < 1024*1024
+      ? Math.round(bytes/1024) + ' KB'
+      : (bytes/1024/1024).toFixed(1) + ' MB';
+  }
+
+  function acceptFile(file){
+    if (!file) return;
+    if (!/^image\//.test(file.type)){
+      setErr('receipt','لازم تكون صورة (JPG أو PNG)');
+      dropEl.classList.add('bad');
+      return;
+    }
+    if (file.size > MAX_MB*1024*1024){
+      setErr('receipt','الصورة كبيرة — الحد الأقصى ' + toAr(MAX_MB) + ' ميجا');
+      dropEl.classList.add('bad');
+      return;
+    }
+    receiptFile = file;
+    clearErr('receipt');
+    dropEl.classList.remove('bad');
+
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      previewEl.innerHTML =
+        '<span class="pv-card">'
+          + '<img class="pv-thumb" src="' + ev.target.result + '" alt="صورة التحويل" />'
+          + '<span class="pv-meta">'
+            + '<span class="pv-name">' + file.name + '</span>'
+            + '<span class="pv-size">' + fmtSize(file.size) + ' — <span class="pv-ok">✓ اترفعت</span></span>'
+          + '</span>'
+          + '<button type="button" class="pv-del" id="pvDel">× شيلها</button>'
+        + '</span>';
+      previewEl.classList.add('show');
+      dropEl.style.display = 'none';
+
+      document.getElementById('pvDel').addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        receiptFile = null;
+        receiptEl.value = '';
+        previewEl.classList.remove('show');
+        previewEl.innerHTML = '';
+        dropEl.style.display = 'flex';
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* the dropzone lives inside a <label> — stop clicks reaching the radio */
+  dropEl.addEventListener('click', function(e){
+    e.preventDefault(); e.stopPropagation();
+    receiptEl.click();
+  });
+  receiptEl.addEventListener('click', function(e){ e.stopPropagation(); });
+  receiptEl.addEventListener('change', function(e){
+    e.stopPropagation();
+    acceptFile(this.files && this.files[0]);
+  });
+
+  ['dragenter','dragover'].forEach(function(ev){
+    dropEl.addEventListener(ev, function(e){
+      e.preventDefault(); e.stopPropagation();
+      dropEl.classList.add('over');
+    });
+  });
+  ['dragleave','drop'].forEach(function(ev){
+    dropEl.addEventListener(ev, function(e){
+      e.preventDefault(); e.stopPropagation();
+      dropEl.classList.remove('over');
+    });
+  });
+  dropEl.addEventListener('drop', function(e){
+    var dt = e.dataTransfer;
+    if (dt && dt.files && dt.files.length) acceptFile(dt.files[0]);
+  });
+
+  /* ── validation ── */
+  function setErr(id,msg){
+    var f = document.getElementById(id), e = document.getElementById('e-'+id);
+    if (f) f.classList.add('bad');
+    if (e){ e.textContent = msg; e.classList.add('show'); }
+  }
+  function clearErr(id){
+    var f = document.getElementById(id), e = document.getElementById('e-'+id);
+    if (f) f.classList.remove('bad');
+    if (e){ e.textContent = ''; e.classList.remove('show'); }
+  }
+
+  function toEn(s){
+    return String(s).replace(/[٠-٩]/g, function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); });
+  }
+  var PHONE = /^01[0125][0-9]{8}$/;
+
+  ['name','phone','phone2','gov','address','txn'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', function(){ clearErr(id); });
+    if (el && el.tagName === 'SELECT') el.addEventListener('change', function(){ clearErr(id); });
+  });
+
+  function validate(){
+    var ok = true;
+
+    var name = document.getElementById('name').value.trim();
+    if (name.length < 3){ setErr('name','اكتب اسمك بالكامل'); ok = false; }
+
+    var phone = toEn(document.getElementById('phone').value.replace(/\s|-/g,''));
+    if (!PHONE.test(phone)){ setErr('phone','رقم موبايل مصري غير صحيح — لازم يبدأ بـ ٠١٠ أو ٠١١ أو ٠١٢ أو ٠١٥'); ok = false; }
+
+    var phone2raw = document.getElementById('phone2').value.replace(/\s|-/g,'');
+    if (phone2raw){
+      var phone2 = toEn(phone2raw);
+      if (!PHONE.test(phone2)){ setErr('phone2','الرقم التاني غير صحيح'); ok = false; }
+    }
+
+    if (!document.getElementById('gov').value){ setErr('gov','اختار المحافظة'); ok = false; }
+
+    var addr = document.getElementById('address').value.trim();
+    if (addr.length < 10){ setErr('address','محتاجين العنوان بتفاصيل أكتر عشان المندوب يوصلك'); ok = false; }
+
+    if (!method){
+      var em = document.getElementById('e-method');
+      em.textContent = 'اختار طريقة الدفع';
+      em.classList.add('show');
+      ok = false;
+    }
+
+    if (method === 'vodafone'){
+      if (!receiptFile){
+        setErr('receipt','ارفع صورة التحويل عشان نقدر نأكد الطلب');
+        dropEl.classList.add('bad');
+        ok = false;
+      }
+    }
+
+    return ok;
+  }
+
+  /* ════════════════════════════════
+     MAP PICKER — init after Leaflet loads
+     ════════════════════════════════ */
+  var leafMap    = null;
+  var leafMarker = null;
+  var pinSource  = null;   /* null | 'auto' | 'manual' */
+  var mapLatEl   = document.getElementById('mapLat');
+  var mapLngEl   = document.getElementById('mapLng');
+  var mapCoords  = document.getElementById('mapCoords');
+  var coordTxt   = document.getElementById('coordTxt');
+  var gmapsLink  = document.getElementById('gmapsLink');
+  var mapNudge   = document.getElementById('mapNudge');
+  var gpsBtn     = document.getElementById('gpsBtn');
+  var mapDot     = document.getElementById('mapDot');
+  var mapStatusTxt = document.getElementById('mapStatusTxt');
+  var geocodeTimer = null;
+  var geoSeq = 0;
+
+  /* load Leaflet JS once */
+  var lfScript = document.createElement('script');
+  lfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+  lfScript.onload = initLeaflet;
+  document.head.appendChild(lfScript);
+
+  function initLeaflet(){
+    leafMap = L.map('map', { zoomControl:true, attributionControl:true });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom:19
+    }).addTo(leafMap);
+
+    /* default view — Cairo */
+    leafMap.setView([30.0444, 31.2357], 11);
+    setTimeout(function(){ leafMap.invalidateSize(); }, 300);
+
+    leafMap.on('click', function(e){ clearAccuracy(); setPin(e.latlng.lat, e.latlng.lng, 'دبست الموقع بنفسك ✓ دقة كاملة', 'manual'); });
+  }
+
+  /* custom pin icon */
+  function pinIcon(){
+    return L.divIcon({
+      html:'<div style="font-size:2rem;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))"><svg class=\"mi\" viewBox=\"0 0 24 24\"><path d=\"M12 21s6-5.4 6-10a6 6 0 10-12 0c0 4.6 6 10 6 10z\"/><circle cx=\"12\" cy=\"11\" r=\"2.2\"/></svg></div>',
+      className:'', iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-34]
+    });
+  }
+
+  /* place / move the marker */
+  function setPin(lat, lng, statusMsg, source){
+    pinSource = source || 'auto';
+    var rlat = Math.round(lat * 1e6)/1e6;
+    var rlng = Math.round(lng * 1e6)/1e6;
+    if (leafMarker){
+      leafMarker.setLatLng([rlat, rlng]);
+    } else {
+      leafMarker = L.marker([rlat, rlng],{ icon:pinIcon(), draggable:true }).addTo(leafMap);
+      leafMarker.on('dragend', function(){
+        var p = leafMarker.getLatLng();
+        clearAccuracy();
+        setPin(p.lat, p.lng, 'عدّلت الموقع يدوياً ✓ دقة كاملة', 'manual');
+      });
+    }
+    leafMap.setView([rlat, rlng], 16);
+    mapLatEl.value = rlat;
+    mapLngEl.value = rlng;
+    coordTxt.textContent = rlat + ' , ' + rlng;
+    gmapsLink.href = 'https://www.google.com/maps?q=' + rlat + ',' + rlng;
+    mapCoords.classList.add('show');
+    mapNudge.classList.remove('show');
+    setStatus('found', statusMsg || 'تم تحديد الموقع ✓');
+  }
+
+  /* clear pin */
+  document.getElementById('coordClear').addEventListener('click', function(){
+    if (leafMarker){ leafMap.removeLayer(leafMarker); leafMarker = null; }
+    clearAccuracy();
+    pinSource = null;
+    mapLatEl.value = '';
+    mapLngEl.value = '';
+    mapCoords.classList.remove('show');
+    setStatus('idle', 'اكتب عنوانك وهيتحدد الموقع تلقائياً');
+    /* re-show nudge if address has content */
+    if (document.getElementById('address').value.trim().length >= 10){
+      mapNudge.classList.add('show');
+    }
+  });
+
+  /* status dot helper */
+  function setStatus(state, msg){
+    mapDot.className = 'dot' + (state !== 'idle' ? ' ' + state : '');
+    mapStatusTxt.textContent = msg;
+  }
+
+  /* ══════════════════════════════════════
+     GEOCODING — cleaning + fallback tiers
+     ══════════════════════════════════════ */
+
+  /* ── local Egyptian area dictionary (fuzzy-matched, works offline) ── */
+  var AREAS = [
+  /* ── القاهرة ── */
+  {n:'مدينة نصر',g:'القاهرة',c:[30.0626,31.3219],a:['نصر سيتي','مدينه نصر']},
+  {n:'مصر الجديدة',g:'القاهرة',c:[30.0866,31.3269],a:['هليوبوليس','هليوبولس']},
+  {n:'المعادي',g:'القاهرة',c:[29.9603,31.2569],a:['معادي']},
+  {n:'دجلة المعادي',g:'القاهرة',c:[29.9550,31.2500],a:['دجله']},
+  {n:'زهراء المعادي',g:'القاهرة',c:[29.9500,31.3000],a:['زهراء']},
+  {n:'الزمالك',g:'القاهرة',c:[30.0614,31.2197],a:['زمالك']},
+  {n:'وسط البلد',g:'القاهرة',c:[30.0444,31.2357],a:['التحرير','ميدان التحرير','داون تاون']},
+  {n:'جاردن سيتي',g:'القاهرة',c:[30.0350,31.2300],a:['جاردن']},
+  {n:'التجمع الخامس',g:'القاهرة',c:[30.0080,31.4300],a:['تجمع خامس','القاهرة الجديدة','التجمع','نيو كايرو']},
+  {n:'التجمع الأول',g:'القاهرة',c:[30.0300,31.4400],a:['تجمع اول']},
+  {n:'التجمع الثالث',g:'القاهرة',c:[30.0200,31.4600],a:['تجمع تالت','تجمع ثالث']},
+  {n:'الرحاب',g:'القاهرة',c:[30.0594,31.4913],a:['مدينة الرحاب']},
+  {n:'مدينتي',g:'القاهرة',c:[30.1090,31.6100],a:['مدينتى']},
+  {n:'الشروق',g:'القاهرة',c:[30.1500,31.6167],a:['مدينة الشروق']},
+  {n:'العبور',g:'القليوبية',c:[30.2280,31.4700],a:['مدينة العبور']},
+  {n:'بدر',g:'القاهرة',c:[30.1300,31.7200],a:['مدينة بدر']},
+  {n:'المقطم',g:'القاهرة',c:[30.0130,31.3080],a:['مقطم']},
+  {n:'حلوان',g:'القاهرة',c:[29.8419,31.3341],a:[]},
+  {n:'المعصرة',g:'القاهرة',c:[29.8900,31.3000],a:['المعصره']},
+  {n:'التبين',g:'القاهرة',c:[29.7900,31.2900],a:[]},
+  {n:'عين شمس',g:'القاهرة',c:[30.1300,31.3200],a:[]},
+  {n:'المرج',g:'القاهرة',c:[30.1600,31.3400],a:[]},
+  {n:'الزيتون',g:'القاهرة',c:[30.1000,31.3100],a:[]},
+  {n:'حدائق القبة',g:'القاهرة',c:[30.0850,31.2800],a:['حدائق القبه']},
+  {n:'شبرا',g:'القاهرة',c:[30.0700,31.2450],a:['شبرا مصر']},
+  {n:'روض الفرج',g:'القاهرة',c:[30.0850,31.2450],a:[]},
+  {n:'الساحل',g:'القاهرة',c:[30.0900,31.2500],a:[]},
+  {n:'العباسية',g:'القاهرة',c:[30.0700,31.2800],a:['العباسيه']},
+  {n:'مدينة السلام',g:'القاهرة',c:[30.1500,31.3400],a:['السلام']},
+  {n:'النزهة',g:'القاهرة',c:[30.1100,31.3600],a:['النزهه','النزهة الجديدة']},
+  {n:'شيراتون',g:'القاهرة',c:[30.1050,31.3650],a:['شيراتون هليوبوليس']},
+  {n:'الماظة',g:'القاهرة',c:[30.0950,31.3450],a:['الماظه']},
+  {n:'روكسي',g:'القاهرة',c:[30.0870,31.3250],a:[]},
+  {n:'كوربة',g:'القاهرة',c:[30.0880,31.3300],a:['الكوربة','كوربه']},
+  {n:'السيدة زينب',g:'القاهرة',c:[30.0290,31.2400],a:['السيده زينب']},
+  {n:'مصر القديمة',g:'القاهرة',c:[30.0060,31.2300],a:['مصر القديمه']},
+  {n:'الدرب الأحمر',g:'القاهرة',c:[30.0430,31.2600],a:[]},
+  {n:'الحسين',g:'القاهرة',c:[30.0480,31.2620],a:['خان الخليلي']},
+  {n:'العتبة',g:'القاهرة',c:[30.0520,31.2470],a:['العتبه']},
+  {n:'رمسيس',g:'القاهرة',c:[30.0620,31.2470],a:['ميدان رمسيس']},
+  {n:'الأميرية',g:'القاهرة',c:[30.1050,31.2900],a:['الاميريه']},
+  {n:'المطرية',g:'القاهرة',c:[30.1200,31.3100],a:['المطريه']},
+
+  /* شوارع رئيسية بالقاهرة */
+  {n:'عباس العقاد',g:'القاهرة',c:[30.0580,31.3400],t:'street',a:['شارع عباس العقاد','العقاد']},
+  {n:'مكرم عبيد',g:'القاهرة',c:[30.0530,31.3350],t:'street',a:['شارع مكرم عبيد']},
+  {n:'شارع الطيران',g:'القاهرة',c:[30.0700,31.3400],t:'street',a:['الطيران']},
+  {n:'شارع التسعين',g:'القاهرة',c:[30.0100,31.4300],t:'street',a:['التسعين','شارع 90','التسعين الشمالي']},
+  {n:'شارع الثورة',g:'القاهرة',c:[30.0900,31.3300],t:'street',a:['شارع الثوره']},
+  {n:'كورنيش المعادي',g:'القاهرة',c:[29.9600,31.2400],t:'street',a:['كورنيش النيل المعادي']},
+  {n:'شارع النصر',g:'القاهرة',c:[30.0680,31.3450],t:'street',a:[]},
+  {n:'صلاح سالم',g:'القاهرة',c:[30.0500,31.2900],t:'street',a:['شارع صلاح سالم']},
+  {n:'الأوتوستراد',g:'القاهرة',c:[30.0000,31.3000],t:'street',a:['الاوتوستراد']},
+
+  /* ── الجيزة ── */
+  {n:'المهندسين',g:'الجيزة',c:[30.0561,31.2000],a:['مهندسين']},
+  {n:'الدقي',g:'الجيزة',c:[30.0383,31.2119],a:['دقي']},
+  {n:'العجوزة',g:'الجيزة',c:[30.0550,31.2100],a:['العجوزه']},
+  {n:'إمبابة',g:'الجيزة',c:[30.0750,31.2070],a:['امبابه','امبابة']},
+  {n:'الوراق',g:'الجيزة',c:[30.1050,31.2050],a:[]},
+  {n:'بولاق الدكرور',g:'الجيزة',c:[30.0300,31.1900],a:['بولاق']},
+  {n:'فيصل',g:'الجيزة',c:[30.0150,31.1900],a:['شارع فيصل']},
+  {n:'الهرم',g:'الجيزة',c:[29.9900,31.1450],a:['شارع الهرم']},
+  {n:'حدائق الأهرام',g:'الجيزة',c:[29.9700,31.1600],a:['حدائق الاهرام']},
+  {n:'المنيب',g:'الجيزة',c:[29.9900,31.2100],a:[]},
+  {n:'الطالبية',g:'الجيزة',c:[30.0050,31.1700],a:['الطالبيه']},
+  {n:'العمرانية',g:'الجيزة',c:[30.0100,31.1950],a:['العمرانيه']},
+  {n:'السادس من أكتوبر',g:'الجيزة',c:[29.9700,30.9500],a:['اكتوبر','6 اكتوبر','السادس من اكتوبر','مدينة 6 اكتوبر']},
+  {n:'حدائق أكتوبر',g:'الجيزة',c:[29.9200,30.9200],a:['حدائق اكتوبر']},
+  {n:'الشيخ زايد',g:'الجيزة',c:[30.0400,30.9700],a:['شيخ زايد','زايد']},
+  {n:'دريم لاند',g:'الجيزة',c:[29.9900,30.9800],a:['دريملاند']},
+  {n:'المنصورية',g:'الجيزة',c:[30.0700,31.1200],a:['المنصوريه']},
+  {n:'كرداسة',g:'الجيزة',c:[30.0400,31.1100],a:['كرداسه']},
+  {n:'أوسيم',g:'الجيزة',c:[30.1200,31.1400],a:['اوسيم']},
+  {n:'البدرشين',g:'الجيزة',c:[29.8500,31.2700],a:[]},
+  {n:'الصف',g:'الجيزة',c:[29.5700,31.2800],a:[]},
+  {n:'جامعة الدول العربية',g:'الجيزة',c:[30.0570,31.2050],t:'street',a:['جامعة الدول','شارع جامعة الدول']},
+  {n:'ميدان لبنان',g:'الجيزة',c:[30.0600,31.2000],t:'street',a:['لبنان']},
+  {n:'ميدان سفنكس',g:'الجيزة',c:[30.0600,31.2050],t:'street',a:['سفنكس']},
+  {n:'شارع السودان',g:'الجيزة',c:[30.0650,31.2000],t:'street',a:['السودان']},
+  {n:'شارع التحرير',g:'الجيزة',c:[30.0380,31.2100],t:'street',a:[]},
+
+  /* ── القليوبية ── */
+  {n:'شبرا الخيمة',g:'القليوبية',c:[30.1286,31.2422],a:['شبرا الخيمه']},
+  {n:'بنها',g:'القليوبية',c:[30.4600,31.1800],a:[]},
+  {n:'قليوب',g:'القليوبية',c:[30.1800,31.2100],a:[]},
+  {n:'الخانكة',g:'القليوبية',c:[30.2100,31.3400],a:['الخانكه']},
+  {n:'القناطر الخيرية',g:'القليوبية',c:[30.1900,31.1300],a:['القناطر']},
+  {n:'طوخ',g:'القليوبية',c:[30.3500,31.2000],a:[]},
+
+  /* ── الإسكندرية ── */
+  {n:'سموحة',g:'الإسكندرية',c:[31.2100,29.9500],a:['سموحه']},
+  {n:'سيدي جابر',g:'الإسكندرية',c:[31.2200,29.9450],a:['سيدى جابر']},
+  {n:'محطة الرمل',g:'الإسكندرية',c:[31.1990,29.9000],a:['الرمل','محطه الرمل']},
+  {n:'محرم بك',g:'الإسكندرية',c:[31.1950,29.9200],a:[]},
+  {n:'الإبراهيمية',g:'الإسكندرية',c:[31.2100,29.9200],a:['الابراهيميه']},
+  {n:'كامب شيزار',g:'الإسكندرية',c:[31.2050,29.9200],a:['كامب شيزر']},
+  {n:'ستانلي',g:'الإسكندرية',c:[31.2400,29.9600],a:[]},
+  {n:'جليم',g:'الإسكندرية',c:[31.2350,29.9550],a:[]},
+  {n:'لوران',g:'الإسكندرية',c:[31.2450,29.9650],a:[]},
+  {n:'بولكلي',g:'الإسكندرية',c:[31.2300,29.9500],a:['بوكلي']},
+  {n:'سان استيفانو',g:'الإسكندرية',c:[31.2400,29.9600],a:['سان ستيفانو']},
+  {n:'ميامي',g:'الإسكندرية',c:[31.2600,30.0000],a:[]},
+  {n:'العصافرة',g:'الإسكندرية',c:[31.2700,30.0100],a:['العصافره']},
+  {n:'المندرة',g:'الإسكندرية',c:[31.2750,30.0200],a:['المندره']},
+  {n:'المنتزه',g:'الإسكندرية',c:[31.2830,30.0160],a:[]},
+  {n:'المعمورة',g:'الإسكندرية',c:[31.2900,30.0300],a:['المعموره']},
+  {n:'أبو قير',g:'الإسكندرية',c:[31.3100,30.0650],a:['ابو قير']},
+  {n:'العجمي',g:'الإسكندرية',c:[31.1000,29.7700],a:['العجمى']},
+  {n:'برج العرب',g:'الإسكندرية',c:[30.9200,29.5300],a:[]},
+  {n:'كليوباترا',g:'الإسكندرية',c:[31.2250,29.9500],a:[]},
+  {n:'فلمنج',g:'الإسكندرية',c:[31.2280,29.9520],a:['فليمنج']},
+  {n:'العطارين',g:'الإسكندرية',c:[31.1950,29.9050],a:[]},
+  {n:'باكوس',g:'الإسكندرية',c:[31.2450,29.9700],a:[]},
+
+  /* ── مدن ومحافظات أخرى ── */
+  {n:'طنطا',g:'الغربية',c:[30.7865,31.0004],a:[]},
+  {n:'المحلة الكبرى',g:'الغربية',c:[30.9700,31.1700],a:['المحله','المحلة']},
+  {n:'كفر الزيات',g:'الغربية',c:[30.8200,30.8200],a:[]},
+  {n:'زفتى',g:'الغربية',c:[30.7100,31.2500],a:[]},
+  {n:'المنصورة',g:'الدقهلية',c:[31.0409,31.3785],a:['المنصوره']},
+  {n:'ميت غمر',g:'الدقهلية',c:[30.7100,31.2600],a:[]},
+  {n:'طلخا',g:'الدقهلية',c:[31.0550,31.3750],a:[]},
+  {n:'الزقازيق',g:'الشرقية',c:[30.5877,31.5020],a:[]},
+  {n:'بلبيس',g:'الشرقية',c:[30.4200,31.5600],a:[]},
+  {n:'العاشر من رمضان',g:'الشرقية',c:[30.2900,31.7400],a:['العاشر','عاشر من رمضان']},
+  {n:'شبين الكوم',g:'المنوفية',c:[30.5600,31.0100],a:[]},
+  {n:'السادات',g:'المنوفية',c:[30.3800,30.5200],a:['مدينة السادات']},
+  {n:'دمنهور',g:'البحيرة',c:[31.0341,30.4682],a:[]},
+  {n:'كفر الدوار',g:'البحيرة',c:[31.1300,30.1300],a:[]},
+  {n:'كفر الشيخ',g:'كفر الشيخ',c:[31.1107,30.9388],a:[]},
+  {n:'دسوق',g:'كفر الشيخ',c:[31.1300,30.6500],a:[]},
+  {n:'دمياط',g:'دمياط',c:[31.4165,31.8133],a:[]},
+  {n:'رأس البر',g:'دمياط',c:[31.5100,31.8300],a:['راس البر']},
+  {n:'بورسعيد',g:'بورسعيد',c:[31.2653,32.3019],a:['بور سعيد']},
+  {n:'الإسماعيلية',g:'الإسماعيلية',c:[30.5965,32.2715],a:['الاسماعيليه']},
+  {n:'السويس',g:'السويس',c:[29.9668,32.5498],a:[]},
+  {n:'بني سويف',g:'بني سويف',c:[29.0661,31.0994],a:['بنى سويف']},
+  {n:'الفيوم',g:'الفيوم',c:[29.3084,30.8428],a:[]},
+  {n:'المنيا',g:'المنيا',c:[28.1099,30.7503],a:[]},
+  {n:'أسيوط',g:'أسيوط',c:[27.1783,31.1859],a:['اسيوط']},
+  {n:'سوهاج',g:'سوهاج',c:[26.5569,31.6948],a:[]},
+  {n:'قنا',g:'قنا',c:[26.1551,32.7160],a:[]},
+  {n:'الأقصر',g:'الأقصر',c:[25.6872,32.6396],a:['الاقصر']},
+  {n:'أسوان',g:'أسوان',c:[24.0889,32.8998],a:['اسوان']},
+  {n:'الغردقة',g:'البحر الأحمر',c:[27.2579,33.8116],a:['الغردقه','هرغادة']},
+  {n:'سفاجا',g:'البحر الأحمر',c:[26.7500,33.9300],a:[]},
+  {n:'مرسى علم',g:'البحر الأحمر',c:[25.0700,34.8900],a:['مرسي علم']},
+  {n:'شرم الشيخ',g:'جنوب سيناء',c:[27.9158,34.3300],a:['شرم']},
+  {n:'دهب',g:'جنوب سيناء',c:[28.5000,34.5100],a:[]},
+  {n:'العريش',g:'شمال سيناء',c:[31.1313,33.8036],a:[]},
+  {n:'مرسى مطروح',g:'مطروح',c:[31.3543,27.2373],a:['مطروح','مرسي مطروح']},
+  {n:'العلمين',g:'مطروح',c:[30.8300,28.9500],a:['العلمين الجديدة']},
+  {n:'الساحل الشمالي',g:'مطروح',c:[30.9500,28.5000],a:['الساحل']},
+  {n:'الخارجة',g:'الوادي الجديد',c:[25.4519,30.5465],a:['الخارجه']}
+  ];
+
+  /* Arabic normalization — folds spelling variants together */
+  function norm(s){
+    return String(s)
+      .replace(/[\u064B-\u0652\u0640]/g,'')
+      .replace(/[٠-٩]/g, function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); })
+      .replace(/[أإآٱ]/g,'ا')
+      .replace(/ة/g,'ه')
+      .replace(/[ىي]/g,'ي')
+      .replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/ء/g,'')
+      .replace(/[^\u0600-\u06FF0-9a-zA-Z ]/g,' ')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+  function stripAl(w){ return w.replace(/^ال/,''); }
+
+  /* Levenshtein distance → similarity ratio */
+  function lev(a,b){
+    if (a === b) return 0;
+    var m=a.length,n=b.length;
+    if(!m) return n; if(!n) return m;
+    var prev=new Array(n+1),cur=new Array(n+1),i,j;
+    for(j=0;j<=n;j++) prev[j]=j;
+    for(i=1;i<=m;i++){
+      cur[0]=i;
+      for(j=1;j<=n;j++){
+        cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));
+      }
+      for(j=0;j<=n;j++) prev[j]=cur[j];
+    }
+    return prev[n];
+  }
+  function sim(a,b){ var L=Math.max(a.length,b.length); return L ? 1-lev(a,b)/L : 0; }
+
+  /* fuzzy-match the typed address against the local dictionary */
+  function localMatch(query, gov){
+    var q = norm(query);
+    if (!q) return [];
+    var qWords = q.split(' ').filter(Boolean);
+    var out = [];
+    AREAS.forEach(function(area){
+      var keys = [area.n].concat(area.a || []);
+      var best = 0, bestKey = '';
+      keys.forEach(function(k){
+        var nk = norm(k), score = 0;
+        if (nk && q.indexOf(nk) !== -1){
+          /* weight by coverage — a longer match beats a generic short one */
+          score = 0.80 + 0.20 * Math.min(1, nk.length / Math.max(6, q.length));
+        } else {
+          var kw = nk.split(' ').length;
+          for (var i=0; i<=qWords.length-kw; i++){
+            var s = sim(stripAl(qWords.slice(i,i+kw).join(' ')), stripAl(nk));
+            if (s > score) score = s;
+          }
+          var sAll = sim(stripAl(q), stripAl(nk));
+          if (sAll > score) score = sAll;
+        }
+        if (score > best){ best = score; bestKey = k; }
+      });
+      if (gov && area.g === gov) best += 0.06;
+      if (area.t === 'street') best += 0.04;
+      if (best >= 0.78){
+        out.push({
+          lat: area.c[0], lng: area.c[1],
+          label: area.n + '، ' + area.g,
+          score: Math.min(best,1),
+          local: true
+        });
+      }
+    });
+    return out.sort(function(a,b){ return b.score - a.score; }).slice(0,5);
+  }
+
+  /* governorate centroids — last-resort fallback */
+  var GOV_COORDS = {
+    'القاهرة':[30.0444,31.2357],'الجيزة':[30.0131,31.2089],'القليوبية':[30.4595,31.1786],
+    'الإسكندرية':[31.2001,29.9187],'المنوفية':[30.5972,30.9876],'الغربية':[30.8754,31.0335],
+    'الدقهلية':[31.0409,31.3785],'الشرقية':[30.5877,31.5020],'البحيرة':[31.0341,30.4682],
+    'كفر الشيخ':[31.1107,30.9388],'دمياط':[31.4165,31.8133],'بورسعيد':[31.2653,32.3019],
+    'الإسماعيلية':[30.5965,32.2715],'السويس':[29.9668,32.5498],'بني سويف':[29.0661,31.0994],
+    'الفيوم':[29.3084,30.8428],'المنيا':[28.1099,30.7503],'أسيوط':[27.1783,31.1859],
+    'سوهاج':[26.5569,31.6948],'قنا':[26.1551,32.7160],'الأقصر':[25.6872,32.6396],
+    'أسوان':[24.0889,32.8998],'البحر الأحمر':[27.2579,33.8116],'مطروح':[31.3543,27.2373],
+    'شمال سيناء':[31.1313,33.8036],'جنوب سيناء':[28.2400,33.6176],'الوادي الجديد':[25.4519,30.5465]
+  };
+
+  /* ── parse an Egyptian address into its usable parts ── */
+  var LM_WORDS  = 'بجوار|بجانب|بجنب|جنب|امام|أمام|قدام|مقابل|خلف|ورا|وراء|فوق|تحت|قريب من|قريب|بالقرب من|ناحية|عند|علامة مميزة';
+  var NOISE_RE  = /(?:عماره|عمارة|برج|بلوك|مبنى|مبني|فيلا|فيلة|الدور|دور|الطابق|طابق|شقه|شقة|وحده|وحدة|رقم|نمره|نمرة)\s*\S*/g;
+  var LANDMARK_RE = new RegExp(
+    '(?:' + LM_WORDS + ')\\s+' +
+    '(.{2,35}?)' +
+    '(?=$|[\\u060C,\\.\\n]|\\s+(?:' + LM_WORDS + '|الدور|دور|شقه|شقة|عماره|عمارة|فيلا|برج|رقم|الطابق))', 'g');
+  var STREET_RE = /(?:شارع|ش\.|طريق|ميدان|كورنيش|جادة)\s*([^\u060C,\.\n]{2,30})/;
+
+  function parseAddress(raw){
+    var s = String(raw).replace(/[٠-٩]/g, function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); });
+
+    /* 1. pull landmarks out first — they stop at the next keyword */
+    var landmarks = [], m;
+    LANDMARK_RE.lastIndex = 0;
+    while ((m = LANDMARK_RE.exec(s)) !== null){
+      var lm = m[1].replace(NOISE_RE,'').trim();
+      if (lm.length >= 3 && landmarks.indexOf(lm) === -1) landmarks.push(lm);
+    }
+
+    /* 2. remove landmark phrases, then look for a street in what's left */
+    var withoutLm = s.replace(LANDMARK_RE, ' ');
+    var street = '';
+    var sm = withoutLm.match(STREET_RE);
+    if (sm) street = sm[0].replace(NOISE_RE,'').trim();
+
+    /* 3. the remainder identifies the district */
+    var rest = withoutLm.replace(NOISE_RE,' ')
+                .replace(/[\u060C,\.\-_\/\\]+/g,' ').replace(/\s+/g,' ').trim();
+
+    return { landmarks: landmarks.slice(0,3), street: street, rest: rest, full: s };
+  }
+
+  /* distance in km */
+  function distKm(a, b){
+    var R = 6371, dLat = (b[0]-a[0])*Math.PI/180, dLon = (b[1]-a[1])*Math.PI/180;
+    var la1 = a[0]*Math.PI/180, la2 = b[0]*Math.PI/180;
+    var h = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.sin(dLon/2)*Math.sin(dLon/2)*Math.cos(la1)*Math.cos(la2);
+    return 2*R*Math.asin(Math.sqrt(h));
+  }
+
+  /* ── location-biased search: results near a known center are far more precise ── */
+  function photonNear(q, center, radiusKm){
+    var url = 'https://photon.komoot.io/api/?limit=6&lang=default&q=' + encodeURIComponent(q);
+    if (center) url += '&lat=' + center[0] + '&lon=' + center[1];
+    return fetch(url).then(function(r){ return r.json(); }).then(function(d){
+      if (!d || !d.features) return [];
+      return d.features.map(function(f){
+        var p = f.properties || {};
+        return {
+          lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0],
+          label: [p.name, p.district, p.city].filter(Boolean).join('، ') || q,
+          src: 'photon'
+        };
+      });
+    }).catch(function(){ return []; });
+  }
+
+  function nominatimNear(q, center, radiusKm){
+    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=6&countrycodes=eg&accept-language=ar&q=' + encodeURIComponent(q);
+    if (center && radiusKm){
+      var dLat = radiusKm/111, dLon = radiusKm/(111*Math.cos(center[0]*Math.PI/180));
+      url += '&viewbox=' + (center[1]-dLon) + ',' + (center[0]+dLat) + ',' + (center[1]+dLon) + ',' + (center[0]-dLat) + '&bounded=1';
+    }
+    return fetch(url).then(function(r){ return r.json(); }).then(function(d){
+      if (!Array.isArray(d)) return [];
+      return d.map(function(x){
+        return {
+          lat: parseFloat(x.lat), lng: parseFloat(x.lon),
+          label: x.display_name.split(',').slice(0,3).join('، '),
+          src: 'nominatim'
+        };
+      });
+    }).catch(function(){ return []; });
+  }
+
+  /* keep only results within radiusKm of center */
+  function nearOnly(list, center, radiusKm){
+    if (!center) return list;
+    return list.filter(function(r){
+      return r.lat && r.lng && distKm([r.lat, r.lng], center) <= radiusKm;
+    });
+  }
+
+  /* ══ MAIN RESOLVER ══
+     district (local dict) → landmark near it → street near it → district centre  */
+  function resolveAddress(raw, gov, seq, done){
+    var parts = parseAddress(raw);
+
+    /* 1. anchor: which district is this? */
+    var districtHits = localMatch(parts.rest || parts.full, gov);
+    var anchor = districtHits.length ? [districtHits[0].lat, districtHits[0].lng]
+               : (gov && GOV_COORDS[gov] ? GOV_COORDS[gov] : null);
+    var anchorLabel = districtHits.length ? districtHits[0].label : (gov || '');
+    var anchorRadius = districtHits.length ? 8 : 30;
+
+    /* 2. build the precise queries worth trying, best first */
+    var probes = [];
+    parts.landmarks.forEach(function(lm){
+      probes.push({ q: lm + (anchorLabel ? ' ' + anchorLabel.split('،')[0] : ''), kind:'landmark', raw: lm });
+    });
+    if (parts.street){
+      probes.push({ q: parts.street + (anchorLabel ? ' ' + anchorLabel.split('،')[0] : ''), kind:'street', raw: parts.street });
+    }
+
+    if (!probes.length){
+      finishWith(districtHits, null);
+      return;
+    }
+
+    var i = 0, collected = [];
+    function nextProbe(){
+      if (seq !== geoSeq) return;
+      if (i >= probes.length){ finishWith(districtHits, collected.length ? collected : null); return; }
+      var p = probes[i++];
+      Promise.all([
+        photonNear(p.q, anchor, anchorRadius),
+        nominatimNear(p.q, anchor, anchorRadius)
+      ]).then(function(res){
+        if (seq !== geoSeq) return;
+        var hits = nearOnly(res[0].concat(res[1]), anchor, anchorRadius);
+        hits.forEach(function(h){
+          h.kind = p.kind;
+          h.precise = true;
+          h.label = (p.kind === 'landmark' ? '<svg class=\"mi\" viewBox=\"0 0 24 24\"><path d=\"M12 21s6-5.4 6-10a6 6 0 10-12 0c0 4.6 6 10 6 10z\"/><circle cx=\"12\" cy=\"11\" r=\"2.2\"/></svg> ' : '<svg class=\"mi\" viewBox=\"0 0 24 24\"><path d=\"M9 3L6 21M15 3l3 18M12 4v3M12 11v3M12 18v3\"/></svg> ') + h.label;
+        });
+        collected = collected.concat(hits);
+        if (collected.length >= 2){ finishWith(districtHits, collected); return; }
+        nextProbe();
+      });
+    }
+    nextProbe();
+
+    function finishWith(dHits, precise){
+      if (seq !== geoSeq) return;
+      var all = (precise || []).concat(dHits || []);
+      var seen = {}, out = [];
+      all.forEach(function(r){
+        if (!r.lat || !r.lng) return;
+        if (r.lat < 21 || r.lat > 32.5 || r.lng < 24 || r.lng > 37.5) return;
+        var k = r.lat.toFixed(3) + ',' + r.lng.toFixed(3);
+        if (!seen[k]){ seen[k] = 1; out.push(r); }
+      });
+      done(out.slice(0,6), parts);
+    }
+  }
+
+  /* ── accuracy circle: shows how approximate the pin is ── */
+  var accCircle = null;
+  function drawAccuracy(lat, lng, meters){
+    if (!leafMap) return;
+    clearAccuracy();
+    accCircle = L.circle([lat, lng], {
+      radius: meters, color:'#A8432A', weight:1, opacity:.5,
+      fillColor:'#A8432A', fillOpacity:.08
+    }).addTo(leafMap);
+  }
+  function clearAccuracy(){
+    if (accCircle && leafMap){ leafMap.removeLayer(accCircle); accCircle = null; }
+  }
+
+  document.getElementById('address').addEventListener('input', function(){
+    var addr = this.value.trim();
+    var gov  = document.getElementById('gov').value;
+    clearTimeout(geocodeTimer);
+
+    if (addr.length >= 10 && !mapLatEl.value) mapNudge.classList.add('show');
+    else if (addr.length < 10) mapNudge.classList.remove('show');
+
+    if (addr.length < 6) return;
+
+    geocodeTimer = setTimeout(function(){
+      var seq = ++geoSeq;
+      setStatus('searching', 'بندور على العنوان...');
+      resolveAddress(addr, gov, seq, function(results, parts){
+        if (seq !== geoSeq) return;
+
+        if (results.length){
+          var top = results[0];
+          var precise = !!top.precise;
+          var msg = precise
+            ? (top.kind === 'landmark' ? 'لقينا العلامة المميزة ✓ دقة عالية' : 'لقينا الشارع ✓ ظبّط الـ pin')
+            : 'دي المنطقة تقريباً — اسحب الـ pin لمكانك';
+          setPin(top.lat, top.lng, msg, 'auto');
+          drawAccuracy(top.lat, top.lng, precise ? (top.kind === 'landmark' ? 250 : 600) : 2000);
+
+          /* ask for a landmark when we only got the district */
+          if (!precise && !parts.landmarks.length){
+            setStatus('warn', 'اكتب علامة مميزة (مثلاً: بجوار مسجد النور) عشان ندقّق أكتر');
+          }
+        } else if (gov && GOV_COORDS[gov]){
+          if (leafMap) leafMap.setView(GOV_COORDS[gov], 11);
+          clearAccuracy();
+          setStatus('warn', 'مش لاقيين العنوان — دوس على الخريطة أو اضغط "موقعي الحالي"');
+          if (!mapLatEl.value) mapNudge.classList.add('show');
+        } else {
+          setStatus('warn', 'اختار المحافظة الأول عشان نقرّب البحث');
+        }
+      });
+    }, 700);
+  });
+
+  /* also re-geocode when governorate changes */
+  document.getElementById('gov').addEventListener('change', function(){
+    var addr = document.getElementById('address').value.trim();
+    if (addr.length >= 8){
+      document.getElementById('address').dispatchEvent(new Event('input'));
+    }
+  });
+
+  /* ── GPS BUTTON ── */
+  gpsBtn.addEventListener('click', function(){
+    if (!navigator.geolocation){
+      setStatus('err','جهازك مش بيدعم تحديد الموقع');
+      return;
+    }
+    gpsBtn.classList.add('loading');
+    gpsBtn.textContent = '⟳ جاري التحديد...';
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        gpsBtn.classList.remove('loading');
+        gpsBtn.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg> موقعي الحالي';
+        if (leafMap){ clearAccuracy(); setPin(pos.coords.latitude, pos.coords.longitude, 'تم تحديد موقعك الحالي ✓ أدق خيار', 'manual'); }
+      },
+      function(err){
+        gpsBtn.classList.remove('loading');
+        gpsBtn.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg> موقعي الحالي';
+        var msg = err.code === 1 ? 'اتسمح لمتصفحك بالوصول للموقع وحاول تاني'
+                : err.code === 2 ? 'مش قادرين نحدد موقعك دلوقتي'
+                : 'انتهت المهلة — جرب تاني';
+        setStatus('err', msg);
+      },
+      { timeout:10000, enableHighAccuracy:true }
+    );
+  });
+
+  /* ── submit ── */
+  document.getElementById('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!validate()){
+      var first = root.querySelector('.drop.bad, .bad, .err.show');
+      if (first) first.scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'بنسجّل الطلب...';
+
+    setTimeout(function(){ confirmOrder(); }, 700);
+  });
+
+  function confirmOrder(){
+    var t = totals(method);
+    var ref = 'BLD-' + Math.floor(100000 + Math.random()*899999);
+    var gov = document.getElementById('gov').value;
+    var name = document.getElementById('name').value.trim();
+    var phone = document.getElementById('phone').value.trim();
+    var lat = mapLatEl.value;
+    var lng = mapLngEl.value;
+
+    var payLabel = method === 'vodafone' ? 'فودافون كاش' : 'الدفع عند الاستلام';
+    var nextLine = method === 'vodafone'
+      ? 'بنراجع صورة التحويل خلال ساعة، وهيوصلك تأكيد على واتساب على الرقم اللي كتبته.'
+      : 'هنكلمك على الرقم اللي كتبته لتأكيد الطلب قبل ما نشحنه.';
+
+    var mapRow = (lat && lng)
+      ? '<div><span>الموقع</span><b><a href="https://www.google.com/maps?q='+lat+','+lng+'" target="_blank" style="color:var(--tea);text-decoration:none"><svg class=\"mi\" viewBox=\"0 0 24 24\"><path d=\"M12 21s6-5.4 6-10a6 6 0 10-12 0c0 4.6 6 10 6 10z\"/><circle cx=\"12\" cy=\"11\" r=\"2.2\"/></svg> عرض على الخريطة</a></b></div>'
+      : '';
+
+    var receiptRow = (method === 'vodafone' && receiptFile)
+      ? '<div><span>صورة التحويل</span><b style="color:var(--mint)">✓ اترفعت</b></div>'
+      : '';
+
+    Store.clear();
+
+    document.getElementById('stepNav').querySelector('.wrap').innerHTML =
+      '<ol><li class="done"><b>١</b> السلة</li><span class="sep"></span>'
+      + '<li class="done"><b>٢</b> البيانات والدفع</li><span class="sep"></span>'
+      + '<li aria-current="step"><b>٣</b> التأكيد</li></ol>';
+
+    root.innerHTML =
+      '<div class="done-box">'
+        + '<div class="tick"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 7"/></svg></div>'
+        + '<h1>وصلنا طلبك</h1>'
+        + '<p>' + nextLine + '</p>'
+        + '<div class="ref"><small>رقم الطلب</small>' + ref + '</div>'
+        + '<div class="recap">'
+          + '<div><span>الاسم</span><b>' + name + '</b></div>'
+          + '<div><span>الموبايل</span><b>' + phone + '</b></div>'
+          + '<div><span>المحافظة</span><b>' + gov + '</b></div>'
+          + '<div><span>طريقة الدفع</span><b>' + payLabel + '</b></div>'
+          + mapRow
+          + receiptRow
+          + '<div><span>الإجمالي</span><b>' + toAr(t.total) + ' ' + orderCur() + '</b></div>'
+        + '</div>'
+        + '<a href="index.html" class="btn-solid">ارجع للرئيسية</a>'
+      + '</div>';
+
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+  }
+})();
+</script>
+</body>
+</html>
