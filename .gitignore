@@ -1,0 +1,16 @@
+# إعدادات محلية — فيها مفاتيح المشروع
+tani-config.js
+
+# نظام التشغيل والمحرر
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ملفات مؤقتة
+_tmp-*
+_demo.html
+_tv-test.html
+*.log
+node_modules/
+tani-supabase.js

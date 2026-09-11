@@ -10,14 +10,20 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <style>
       :root{
-    --pine-900:#0B2621; --pine-800:#10352E; --pine-700:#16453C; --pine-600:#1D5A4E;
-    --accent-600:#C8431F; --accent-500:#E0522C; --accent-050:#FCEDE8;
-    --sand-050:#FAF8F4; --sand-100:#F2EFE8; --sand-200:#E7E2D8; --sand-300:#D6CFC1;
-    --ink-900:#14171A; --ink-600:#4E535A; --ink-400:#858B94; --ink-300:#A8ADB5;
-    --ok-700:#175C41; --ok-600:#1F6B4D; --ok-050:#E8F3ED;
+    --pine-900:#072B23; --pine-800:#0D3B31; --pine-700:#155044; --pine-600:#1C6654;
+    --pine-500:#248068;
+    --accent-700:#9C3517; --accent-600:#BE4420; --accent-500:#D9542B; --accent-400:#E8724C;
+    --accent-050:#FDEFE9;
+    --sand-050:#FBFAF7; --sand-100:#EDEAE1; --sand-200:#E1DCD1; --sand-300:#CFC9BB;
+    --ink-900:#12171A; --ink-700:#30363C; --ink-600:#4B5159; --ink-400:#7F868F; --ink-300:#A5ABB3;
+    --ok-700:#15583E; --ok-600:#1E6A4B; --ok-050:#E6F2EC;
     --warn-700:#7A5510; --warn-050:#FBF1DF;
-    --surface:#FFFFFF; --on-dark:#F2F0EA; --on-dark-60:rgba(242,240,234,.62);
-    --line:#E4DFD5; --line-strong:#D2CCBE; --line-dark:rgba(242,240,234,.14);
+    --surface:#FFFFFF; --on-dark:#F4F2EC; --on-dark-60:rgba(244,242,236,.66);
+    --on-dark-40:rgba(244,242,236,.44);
+    --line:#E6E2D9; --line-strong:#D3CDC0; --line-dark:rgba(244,242,236,.15);
+    --grad-dark:linear-gradient(165deg,#124437 0%,#0D3B31 45%,#093027 100%);
+    --grad-hero:radial-gradient(120% 100% at 85% 0%,#1A5A49 0%,#0D3B31 55%,#082C24 100%);
+    --grad-accent:linear-gradient(135deg,#E0602F 0%,#C8461F 100%);
     --s1:.25rem; --s2:.5rem; --s3:.75rem; --s4:1rem; --s5:1.5rem; --s6:2rem; --s7:3rem; --s8:4rem;
     --r1:6px; --r2:10px; --r3:14px; --rp:999px;
     --sh1:0 1px 2px rgba(20,23,26,.06);
@@ -35,6 +41,8 @@
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:'Tajawal',system-ui,sans-serif;background:var(--paper);
+    background-image:radial-gradient(90% 55% at 50% 0%,rgba(13,59,49,.045) 0%,transparent 60%);
+    background-attachment:fixed;
     color:var(--ink);line-height:1.75;-webkit-font-smoothing:antialiased;
     min-height:100vh;display:flex;flex-direction:column;
   }
@@ -43,10 +51,10 @@
   :focus-visible{outline:2px solid var(--tea);outline-offset:3px;border-radius:var(--r1)}
   .eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.18em;color:var(--ink-soft)}
 
-  .masthead{background:var(--paper);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:50}
+  .masthead{background:rgba(251,250,247,.92);backdrop-filter:saturate(1.4) blur(8px);-webkit-backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:50;box-shadow:0 6px 20px -18px rgba(7,43,35,.8)}
   .masthead-in{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding-block:.85rem}
   .mi{width:14px;height:14px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:-2px}
-  .logo-mk{width:30px;height:30px;border-radius:var(--r1);background:var(--accent-500);display:inline-grid;place-items:center;vertical-align:-8px;margin-inline-end:.45rem}
+  .logo-mk{width:30px;height:30px;border-radius:var(--r1);background:var(--grad-accent);display:inline-grid;place-items:center;vertical-align:-8px;margin-inline-end:.45rem;box-shadow:0 2px 8px -2px rgba(217,84,43,.55)}
   .logo-mk svg{width:17px;height:17px;display:block}
   .wordmark{font-family:'Changa',sans-serif;font-size:1.6rem;color:var(--leaf);text-decoration:none;line-height:1}
   .wordmark b{color:var(--tea);font-weight:400}
@@ -102,7 +110,7 @@
     padding:1.1rem 1.2rem;cursor:pointer;display:block;transition:border-color .22s,background .22s;
   }
   .pay-opt:hover{border-color:var(--brass)}
-  .pay-opt.sel{border-color:var(--tea);background:#FFFAF7}
+  .pay-opt.sel{border-color:var(--accent-500);background:var(--accent-050);box-shadow:0 0 0 1px var(--accent-500) inset}
   .pay-head{display:flex;align-items:center;gap:.85rem}
   .pay-head input{accent-color:var(--tea);width:17px;height:17px;flex:none;cursor:pointer}
   .pay-mark{
@@ -184,7 +192,7 @@
   .pv-del:hover{border-color:var(--danger);color:var(--danger)}
 
   /* summary */
-  .summary{background:var(--leaf);color:var(--paper);padding:1.8rem 1.6rem;border-radius:var(--r1);position:sticky;top:88px}
+  .summary{background:var(--grad-dark);color:var(--paper);padding:1.8rem 1.6rem;border-radius:var(--r2);position:sticky;top:88px;box-shadow:0 16px 36px -22px rgba(7,43,35,.85);border:1px solid rgba(244,242,236,.08)}
   .summary h2{font-size:.72rem;font-weight:700;letter-spacing:.16em;color:var(--brass);margin-bottom:1.3rem}
   .mini{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;font-weight:300;margin-bottom:.7rem;color:rgba(242,236,221,.8)}
   .mini em{font-style:normal;color:rgba(242,236,221,.5);font-size:.8rem}
@@ -198,7 +206,7 @@
   .sum-total b{font-family:'Changa',sans-serif;font-weight:400;font-size:1.9rem;color:var(--brass);font-variant-numeric:tabular-nums}
 
   .btn-go{
-    display:block;width:100%;text-align:center;background:var(--tea);color:var(--paper);
+    display:block;width:100%;text-align:center;background:var(--grad-accent);color:#fff;
     font-family:inherit;font-size:.98rem;font-weight:600;padding:.95rem 1rem;border:0;border-radius:var(--r1);
     margin-top:1.5rem;cursor:pointer;transition:background .22s,transform .22s;
   }
@@ -221,7 +229,7 @@
   .recap{text-align:start;border-top:1px solid var(--rule);padding-top:1.4rem;margin-bottom:2rem}
   .recap div{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;padding-block:.5rem;border-bottom:1px solid var(--rule);font-weight:300;color:var(--ink-soft)}
   .recap div b{color:var(--leaf);font-weight:500;text-align:end}
-  .btn-solid{background:var(--tea);color:var(--paper);text-decoration:none;font-size:.95rem;font-weight:600;padding:.85rem 2rem;border-radius:var(--r1);display:inline-block;transition:background .22s,transform .22s}
+  .btn-solid{background:var(--grad-accent);color:#fff;text-decoration:none;font-size:.95rem;font-weight:600;padding:.85rem 2rem;border-radius:var(--r1);display:inline-block;transition:background .22s,transform .22s}
   .btn-solid:hover{background:#BF4720;transform:translateY(-1px)}
 
   .empty{text-align:center;padding-block:4rem;max-width:42ch;margin-inline:auto}
@@ -359,7 +367,9 @@
   </div>
 </footer>
 
+<script src="tani-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="tani-verify.js"></script>
 <script src="tani-supabase.js"></script>
 <script>
 (function(){
@@ -1353,10 +1363,15 @@
     }
 
     var btn = document.getElementById('submitBtn');
+    var label = btn.textContent;
     btn.disabled = true;
-    btn.textContent = 'بنسجّل الطلب...';
+    btn.textContent = 'بنتأكد...';
 
-    setTimeout(function(){ confirmOrder(); }, 700);
+    TaniVerify.require('order').then(function(human){
+      if(!human){ btn.disabled = false; btn.textContent = label; return; }
+      btn.textContent = 'بنسجّل الطلب...';
+      setTimeout(function(){ confirmOrder(); }, 700);
+    });
   });
 
   function confirmOrder(){

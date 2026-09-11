@@ -10,10 +10,13 @@
 (function (global) {
   'use strict';
 
-  /* ── ١) الإعدادات — غيّر السطرين دول ───────────────────── */
+  /* ── ١) الإعدادات ──────────────────────────────────────────
+     بتتقرا من tani-config.js (متجاهَل في git).
+     انسخ tani-config.example.js وسمّيه tani-config.js وحط بياناتك. */
+  var EXT = global.TANI_CONFIG || {};
   var CONFIG = {
-    url:     'https://YOUR-PROJECT.supabase.co',
-    anonKey: 'YOUR-ANON-KEY'
+    url:     EXT.supabaseUrl     || 'https://YOUR-PROJECT.supabase.co',
+    anonKey: EXT.supabaseAnonKey || 'YOUR-ANON-KEY'
   };
   /* ملاحظة: مفتاح anon معمول عشان يتحط في المتصفح — الحماية
      الحقيقية في سياسات RLS اللي في supabase-setup.sql، مش في
