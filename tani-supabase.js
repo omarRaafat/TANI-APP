@@ -26,7 +26,17 @@
                 && CONFIG.anonKey.indexOf('YOUR-ANON') === -1
                 && typeof global.supabase !== 'undefined';
 
-  var sb = CONFIGURED ? global.supabase.createClient(CONFIG.url, CONFIG.anonKey) : null;
+  /* persistSession: عشان نفس الهوية تفضل بعد ما يقفل الصفحة —
+     من غيرها كل فتحة بتاخد uid جديد، والإعلانات القديمة تبقى
+     مش بتاعته فمش هيقدر يمسحها (RLS بتقارن بـ auth.uid) */
+  var sb = CONFIGURED ? global.supabase.createClient(CONFIG.url, CONFIG.anonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false,
+      storageKey: 'tani.auth'
+    }
+  }) : null;
 
   /* ── ٢) تحويل بين شكل الجدول وشكل الواجهة ──────────────── */
   function fromRow(r) {
@@ -147,9 +157,14 @@
         DB.listings = local;
         return Promise.resolve();
       }
-      return sb.from('listings').delete().eq('id', id)
+      /* .select() بيرجّع الصفوف اللي اتمسحت فعلاً — من غيرها RLS
+         بترفض بصمت وإحنا نفتكر إن المسح نجح */
+      return sb.from('listings').delete().eq('id', id).select()
         .then(function (res) {
-          if (res.error) throw new Error(res.error.message);
+          if (res.error) throw new Error(DB.auth._say(res.error.message));
+          if (!res.data || !res.data.length) {
+            throw new Error('مقدرناش نمسح الإعلان — ده مسموح لصاحبه بس من نفس الجهاز.');
+          }
           DB.listings = DB.listings.filter(function (l) { return l.id !== id; });
         });
     },
@@ -225,6 +240,24 @@
     normPhone: normPhone,
     validPhone: validPhone,
 
+    /* ترجمة أخطاء Supabase لرسايل مفهومة */
+    _say: function (m) {
+      m = String(m || '');
+      if (/rate limit|too many requests|429/i.test(m))
+        return 'بعتنا محاولات كتير في وقت قصير — استنى شوية وجرّب تاني.';
+      if (/invalid.*(otp|token)|expired|incorrect/i.test(m))
+        return 'الكود غلط أو انتهت صلاحيته — اطلب كود جديد.';
+      if (/email.*(invalid|format)|invalid.*email/i.test(m))
+        return 'الإيميل مش مظبوط — راجعه وجرّب تاني.';
+      if (/signups? not allowed|disabled/i.test(m))
+        return 'الطريقة دي مش متاحة حالياً — جرّب طريقة تانية.';
+      if (/network|fetch|failed to fetch/i.test(m))
+        return 'في مشكلة في الاتصال — اتأكد من النت وجرّب تاني.';
+      if (/already registered|already been/i.test(m))
+        return 'الإيميل ده مستخدم قبل كده — جرّب تسجّل الدخول بيه.';
+      return m;
+    },
+
     /* إرسال الكود — بيحوّل الحساب المجهول لحساب دائم بنفس الـ uid
        فالإعلانات القديمة بتفضل مربوطة بيه */
     send: function (identifier, market) {
@@ -240,17 +273,18 @@
       pending = { channel: isEmail ? 'email' : 'phone', value: value };
 
       var payload = isEmail ? { email: value } : { phone: value };
+      var say = DB.auth._say;
       return sb.auth.updateUser(payload).then(function (res) {
         if (res.error) {
           /* لو مفيش جلسة أصلاً، ابدأ واحدة جديدة بالـ OTP */
           if (/session|not authenticated/i.test(res.error.message)) {
             return sb.auth.signInWithOtp(payload).then(function (r2) {
-              if (r2.error) throw new Error(r2.error.message);
+              if (r2.error) throw new Error(say(r2.error.message));
               pending.fresh = true;
               return r2;
             });
           }
-          throw new Error(res.error.message);
+          throw new Error(say(res.error.message));
         }
         return res;
       });
@@ -271,7 +305,7 @@
       args[pending.channel] = pending.value;
 
       return sb.auth.verifyOtp(args).then(function (res) {
-        if (res.error) throw new Error(res.error.message);
+        if (res.error) throw new Error(DB.auth._say(res.error.message));
         return sb.auth.getUser();
       }).then(function (res) {
         var u = res.data && res.data.user;

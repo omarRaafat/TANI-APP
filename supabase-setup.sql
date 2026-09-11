@@ -157,6 +157,9 @@ create trigger verified_seller
 
 
 -- ── ٧) تنضيف صور الإعلان المحذوف ──────────────────────────
+-- ملاحظة: المسح المباشر من storage.objects ممنوع في Supabase
+-- (ERROR 42501). بنستخدم storage.delete_object اللي هي الطريقة
+-- المدعومة، ولو مش موجودة بنسيب الصور من غير ما نوقف مسح الإعلان.
 create or replace function public.purge_listing_photos()
 returns trigger language plpgsql security definer set search_path = public as $$
 declare u text; key text;
@@ -164,8 +167,14 @@ begin
   foreach u in array coalesce(old.photos, '{}') loop
     key := substring(u from '/listing-photos/(.*)$');
     if key is not null then
-      delete from storage.objects
-       where bucket_id = 'listing-photos' and name = key;
+      begin
+        -- الطريقة المدعومة؛ لو مش متاحة في نسخة مشروعك
+        -- بنتجاهل بدل ما نوقف مسح الإعلان
+        execute 'select storage.delete_object($1,$2)'
+          using 'listing-photos', key;
+      exception when others then
+        null;
+      end;
     end if;
   end loop;
   return old;
@@ -189,6 +198,10 @@ create trigger purge_photos
 --
 --  ٣) Authentication → Sign In / Providers → Email → Enable
 --     (قناة احتياطية، وبتشتغل مجاناً من غير أي مزوّد)
+--
+--  *) لو دالة storage.delete_object مش متاحة في مشروعك، صور
+--     الإعلانات المحذوفة هتفضل في الـ bucket من غير ما تأثر على
+--     الموقع. تقدر تنضّفها من Storage → listing-photos وقت ما تحب.
 --
 --  ٤) Authentication → Rate Limits → اضبط حد إرسال الـ OTP
 --     المقترح: ٥ رسايل للرقم في الساعة

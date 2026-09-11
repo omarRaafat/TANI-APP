@@ -20,15 +20,16 @@
     turnstileSiteKey: (global.TANI_CONFIG && global.TANI_CONFIG.turnstileSiteKey)
                       || 'YOUR-TURNSTILE-SITE-KEY',
 
-    /* كل عملية ناجحة بتفضل موثّقة كام دقيقة قبل ما نسأل تاني */
+    /* مهلة قصيرة عشان لو الإرسال اتعطل وأعاد المحاولة ميتسألش تاني.
+       0 = اسأل في كل عملية */
     trustMinutes: {
-      publish: 30,
-      order:   30,
-      otp:     10
+      publish: 0,
+      order:   0,
+      otp:     2
     },
 
-    /* بعد كام محاولة على نفس العملية نطلب تحقق تاني فوراً */
-    attemptsBeforeRecheck: 3
+    /* التحقق صالح لعملية واحدة بس */
+    attemptsBeforeRecheck: 1
   };
 
   var TURNSTILE_ON = CONFIG.turnstileSiteKey.indexOf('YOUR-TURNSTILE') === -1;
@@ -51,7 +52,8 @@
   function stillTrusted(action) {
     var s = loadState()[action];
     if (!s) return false;
-    var mins = CONFIG.trustMinutes[action] || 15;
+    var mins = CONFIG.trustMinutes[action];
+    if (typeof mins !== 'number') mins = 15;
     if (Date.now() - s.at > mins * 60000) return false;
     if ((s.uses || 0) >= CONFIG.attemptsBeforeRecheck) return false;
     return true;
@@ -105,17 +107,17 @@
       var b = 2 + Math.floor(Math.random() * 8);
       return {
         kind: 'add',
-        q: 'كام يساوي ' + toAr(a) + ' + ' + toAr(b) + ' ؟',
+        q: 'ناتج ' + toAr(a) + ' + ' + toAr(b),
         check: function (v) { return parseNum(v) === a + b; }
       };
     }
-    /* اختار الأكبر — سهل على الإنسان، مش مباشر للبوت البدائي */
+    /* اختيار الأكبر — سريع للمستخدم، مش مباشر للسكربتات */
     var x = 3 + Math.floor(Math.random() * 30);
     var y = 3 + Math.floor(Math.random() * 30);
     while (y === x) { y = 3 + Math.floor(Math.random() * 30); }
     return {
       kind: 'pick',
-      q: 'اكتب الرقم الأكبر: ' + toAr(x) + ' ولا ' + toAr(y) + ' ؟',
+      q: 'الأكبر بين ' + toAr(x) + ' و ' + toAr(y),
       check: function (v) { return parseNum(v) === Math.max(x, y); }
     };
   }
@@ -139,6 +141,7 @@
     '.tv-in{width:100%;border:1px solid #D3CDC0;border-radius:6px;padding:.6rem .75rem;font-size:1.05rem;',
       "font-family:'Changa',sans-serif;text-align:center;letter-spacing:.1em;outline:0;background:#fff}",
     '.tv-in:focus{border-color:#155044;box-shadow:0 0 0 3px rgba(217,84,43,.18)}',
+    '.tv-in::placeholder{color:#A5ABB3;letter-spacing:normal;font-size:.85rem}',
     '.tv-err{display:none;background:#FDEFE9;border:1px solid #EBC4B8;color:#9C3517;border-radius:6px;',
       'padding:.6rem .75rem;font-size:.8rem;margin-bottom:.75rem;line-height:1.6}',
     '.tv-err.on{display:block}',
@@ -159,10 +162,16 @@
     document.head.appendChild(s);
   }
 
+  var TITLES = {
+    publish: 'خطوة أمان سريعة',
+    order:   'خطوة أمان سريعة',
+    otp:     'خطوة أمان سريعة'
+  };
+
   var REASONS = {
-    publish: 'قبل ما ننشر إعلانك، بنتأكد إنك مش روبوت — ده بيحمي السوق من الإعلانات الوهمية.',
-    order:   'قبل ما نسجّل طلبك، بنتأكد إنك مش روبوت — ده بيحمي الباعة من الطلبات الوهمية.',
-    otp:     'قبل ما نبعت الكود، بنتأكد إنك مش روبوت — ده بيمنع استنزاف الرسايل.'
+    publish: 'بنعملها قبل النشر عشان نحافظ على جودة الإعلانات في السوق.',
+    order:   'بنعملها قبل تسجيل الطلب عشان نحافظ على حقوق الباعة.',
+    otp:     'بنعملها قبل إرسال الكود.'
   };
 
   var ovl, box, current = null;
@@ -177,7 +186,7 @@
     ovl.innerHTML =
       '<div class="tv-box">' +
         '<button class="tv-x" type="button" aria-label="إغلاق">&#10005;</button>' +
-        '<h3>تأكيد إنك إنسان</h3>' +
+        '<h3 class="tv-ttl"></h3>' +
         '<p class="tv-why"></p>' +
         '<div class="tv-slot"></div>' +
         '<div class="tv-err" role="alert"></div>' +
@@ -227,6 +236,7 @@
       return new Promise(function (resolve) {
         current = { action: action, resolve: resolve };
 
+        ovl.querySelector('.tv-ttl').textContent = TITLES[action] || TITLES.publish;
         ovl.querySelector('.tv-why').textContent = REASONS[action] || REASONS.publish;
         clearErr();
         var slot = ovl.querySelector('.tv-slot');
@@ -238,10 +248,10 @@
         document.body.style.overflow = 'hidden';
 
         if (TURNSTILE_ON) {
-          note.textContent = 'محمي بواسطة Cloudflare Turnstile';
+          note.textContent = '';
           slot.innerHTML = '<div class="tv-ts"></div>';
           go.disabled = true;
-          go.textContent = 'بنتأكد...';
+          go.textContent = 'لحظة...';
 
           loadTurnstile().then(function (ts) {
             ts.render(slot.firstChild, {
@@ -278,10 +288,10 @@
   function localChallenge(slot, go, note) {
     var ch = makeChallenge();
     var tries = 0;
-    note.textContent = 'سؤال بسيط عشان نتأكد إنك مش روبوت';
+    note.textContent = '';
     slot.innerHTML =
       '<div class="tv-q"><b></b><input class="tv-in" type="text" inputmode="numeric" ' +
-      'autocomplete="off" aria-label="إجابتك" /></div>';
+      'autocomplete="off" placeholder="اكتب الإجابة" aria-label="الإجابة" /></div>';
     slot.querySelector('b').textContent = ch.q;
     var input = slot.querySelector('.tv-in');
     go.disabled = false;
@@ -298,9 +308,9 @@
         ch = makeChallenge();
         slot.querySelector('b').textContent = ch.q;
         tries = 0;
-        showErr('مش مظبوط — جرّب السؤال الجديد ده');
+        showErr('نجرّب سؤال تاني');
       } else {
-        showErr('الإجابة مش مظبوطة — جرّب تاني');
+        showErr('الإجابة مش مظبوطة');
       }
       input.focus();
     }
