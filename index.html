@@ -124,21 +124,25 @@
     background:radial-gradient(circle,rgba(217,84,43,.20) 0%,rgba(217,84,43,0) 68%);
   }
   .hero > .wrap{position:relative;z-index:1}
-  .hero-in{position:relative;z-index:1;padding-block:var(--s7) var(--s6);max-width:660px}
+  .hero-in{
+    position:relative;z-index:1;padding-block:var(--s7) var(--s6);
+    max-width:720px;margin-inline:auto;text-align:center;
+  }
   .kicker{
     display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--t-xs);color:var(--on-dark-60);
     border:1px solid var(--line-dark);border-radius:var(--rp);padding:.25rem .75rem;margin-bottom:var(--s4);
   }
+  .hero .kicker{margin-inline:auto}
   .kicker .dot{width:5px;height:5px;border-radius:50%;background:var(--accent-500);flex:none}
   .hero h1{font-family:'Changa',sans-serif;font-weight:700;font-size:var(--t-3xl);line-height:1.16;letter-spacing:-.01em}
   .hero h1 em{font-style:normal;color:var(--accent-500)}
-  .hero p{color:var(--on-dark-60);margin:var(--s3) 0 var(--s5);max-width:48ch}
-  .search{display:flex;align-items:center;gap:var(--s2);background:var(--surface);border-radius:var(--r2);padding:var(--s2);box-shadow:0 18px 40px -18px rgba(4,26,21,.65);max-width:560px;transition:box-shadow .2s}
+  .hero p{color:var(--on-dark-60);margin:var(--s3) auto var(--s5);max-width:52ch}
+  .search{display:flex;align-items:center;gap:var(--s2);background:var(--surface);border-radius:var(--r2);padding:var(--s2);box-shadow:0 18px 40px -18px rgba(4,26,21,.65);max-width:560px;margin-inline:auto;transition:box-shadow .2s}
   .search:focus-within{box-shadow:0 18px 40px -18px rgba(4,26,21,.7),0 0 0 3px rgba(217,84,43,.32)}
   .search .i{stroke:var(--ink-400);margin-inline-start:var(--s2)}
   .search input{flex:1;border:0;outline:0;background:transparent;padding:.4rem .3rem;color:var(--ink-900);min-width:0}
   .search input::placeholder{color:var(--ink-300)}
-  .metrics{display:flex;gap:var(--s6);margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--line-dark);flex-wrap:wrap}
+  .metrics{display:flex;gap:var(--s6);margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--line-dark);flex-wrap:wrap;justify-content:center}
   .metric b{display:block;font-family:'Changa',sans-serif;font-size:var(--t-lg);font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
   .metric span{font-size:var(--t-xs);color:var(--on-dark-40)}
 
@@ -147,6 +151,8 @@
   .sec-tint{background:var(--sand-100);border-block:1px solid var(--line)}
   .sec-dark{background:var(--grad-dark);color:var(--on-dark)}
   .sec-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s4);margin-bottom:var(--s5);flex-wrap:wrap}
+  .sec-hd.center{flex-direction:column;align-items:center;text-align:center}
+  .sec-hd.center p{margin-inline:auto}
   .sec-hd h2{font-family:'Changa',sans-serif;font-weight:700;font-size:var(--t-xl);line-height:1.25}
   .sec-hd p{color:var(--ink-600);font-size:var(--t-sm);margin-top:var(--s1);max-width:56ch}
   .sec-dark .sec-hd p{color:var(--on-dark-60)}
@@ -154,7 +160,11 @@
   .sec-dark .lbl{color:var(--accent-400)}
 
   /* ═══ CATEGORY RAIL ═══ */
+  /* justify-content:center بيكسر التمرير الأفقي (العناصر بتطلع
+     بره الحاوية ومينفعش توصلها)، فبنوسّط بـ margin على المحتوى */
   .rail{display:flex;gap:var(--s2);overflow-x:auto;padding-bottom:var(--s2)}
+  .rail > *{margin-block:0}
+  .rail::before,.rail::after{content:'';margin-inline:auto}
   .rail::-webkit-scrollbar{height:4px}
   .rail::-webkit-scrollbar-thumb{background:var(--sand-300);border-radius:var(--rp)}
   .chip{
@@ -170,7 +180,7 @@
   .chip[aria-pressed="true"] .n{background:rgba(242,240,234,.16);color:var(--on-dark)}
 
   /* ═══ TOOLBAR ═══ */
-  .toolbar{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;padding-block:var(--s3);border-bottom:1px solid var(--line);margin-bottom:var(--s4)}
+  .toolbar{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;justify-content:center;padding-block:var(--s3);border-bottom:1px solid var(--line);margin-bottom:var(--s4)}
   .sel{
     appearance:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--r1);
     padding:.42rem 2rem .42rem .75rem;font-size:var(--t-sm);cursor:pointer;
@@ -179,7 +189,7 @@
   }
   .sel:hover{border-color:var(--line-strong)}
   .num-in{width:112px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r1);padding:.42rem .7rem;font-size:var(--t-sm)}
-  .res{margin-inline-start:auto;font-size:var(--t-sm);color:var(--ink-600)}
+  .res{font-size:var(--t-sm);color:var(--ink-600)}
   .res b{font-family:'Changa',sans-serif;color:var(--ink-900);font-variant-numeric:tabular-nums}
   .active-f{display:flex;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s4)}
   .fchip{display:inline-flex;align-items:center;gap:var(--s1);background:var(--pine-800);color:var(--on-dark);font-size:var(--t-xs);padding:.22rem .5rem .22rem .3rem;border-radius:var(--r1);border:0;cursor:pointer}
@@ -364,6 +374,35 @@
     font-size:var(--t-xs);color:var(--warn-700);margin-top:var(--s4);line-height:1.6;
   }
 
+  /* ── شاشة نجاح التوثيق ── */
+  .vok{
+    position:absolute;inset:0;background:var(--surface);border-radius:var(--r3);
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    gap:var(--s3);padding:var(--s6);text-align:center;z-index:3;
+  }
+  .vok.on{display:flex}
+  .vok-mk{width:84px;height:84px;border-radius:50%;background:var(--ok-050);display:grid;place-items:center;position:relative}
+  .vok-mk::after{
+    content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--ok-600);
+    opacity:0;animation:vokRing .9s cubic-bezier(.2,.8,.3,1) .15s forwards;
+  }
+  .vok-mk svg{width:44px;height:44px;fill:none;stroke:var(--ok-600);stroke-width:2.6;
+    stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1}
+  .vok-mk .circ{stroke-dasharray:170;stroke-dashoffset:170;animation:vokDraw .55s ease-out forwards}
+  .vok-mk .tick{stroke-dasharray:40;stroke-dashoffset:40;animation:vokDraw .35s ease-out .45s forwards}
+  .vok b{font-family:'Changa',sans-serif;font-size:var(--t-md);color:var(--ink-900);
+    opacity:0;animation:vokIn .4s ease-out .6s forwards}
+  .vok span{font-size:var(--t-sm);color:var(--ink-600);opacity:0;
+    animation:vokIn .4s ease-out .72s forwards}
+  @keyframes vokDraw{to{stroke-dashoffset:0}}
+  @keyframes vokRing{0%{opacity:.55;transform:scale(.82)}100%{opacity:0;transform:scale(1.22)}}
+  @keyframes vokIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){
+    .vok-mk::after,.vok-mk .circ,.vok-mk .tick,.vok b,.vok span{animation:none}
+    .vok-mk .circ,.vok-mk .tick{stroke-dashoffset:0}
+    .vok b,.vok span{opacity:1}
+  }
+
   .toast{position:fixed;inset-inline-start:50%;bottom:var(--s5);transform:translate(50%,180%);background:var(--pine-900);color:var(--on-dark);border-radius:var(--r2);padding:.7rem 1.1rem;font-size:var(--t-sm);z-index:300;display:flex;align-items:center;gap:var(--s3);transition:transform .3s cubic-bezier(.2,1,.3,1);box-shadow:var(--sh3);max-width:calc(100% - var(--s6))}
   .toast.on{transform:translate(50%,0)}
   .toast .i{stroke:var(--ok-600);flex:none}
@@ -380,7 +419,9 @@
     .wrap{width:min(1200px,100% - var(--s4))}
     .nav{display:none}
     .fg{grid-template-columns:1fr}
-    .metrics{gap:var(--s5)}
+    /* شبكة بدل flex عشان ميحصلش تمدد أفقي على الشاشات الصغيرة */
+    .metrics{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);text-align:center}
+    .hero-in{text-align:center}
     .hdr-in{height:56px}
     .logo-sub{display:none}
     .hide-sm{display:none}
@@ -438,14 +479,14 @@
 
 <section class="sec">
   <div class="wrap">
-    <div class="sec-hd"><div><span class="lbl">تصفّح</span><h2>الأقسام</h2></div></div>
+    <div class="sec-hd center"><div><span class="lbl">تصفّح</span><h2>الأقسام</h2></div></div>
     <div class="rail" id="rail" role="group" aria-label="الأقسام"></div>
   </div>
 </section>
 
 <section id="browse" class="sec sec-tint">
   <div class="wrap">
-    <div class="sec-hd">
+    <div class="sec-hd center">
       <div><span class="lbl">المعروض</span><h2>إعلانات الناس</h2>
       <p>كل إعلان رفعه صاحبه بصوره وحالته وسعره. الدفع عند الاستلام متاح.</p></div>
     </div>
@@ -469,7 +510,7 @@
 
 <section id="post" class="sec">
   <div class="wrap">
-    <div class="sec-hd">
+    <div class="sec-hd center">
       <div><span class="lbl">اعرض</span><h2>حط إعلانك في دقيقتين</h2>
       <p>املا البيانات وشوف شكل إعلانك وهو بيتبني جنبك. أول ما تنشره هيظهر في المعروض فوراً.</p></div>
     </div>
@@ -554,7 +595,7 @@
 
 <section id="how" class="sec sec-dark">
   <div class="wrap">
-    <div class="sec-hd"><div><span class="lbl">الطريقة</span><h2>الطرفين بيكسبوا</h2>
+    <div class="sec-hd center"><div><span class="lbl">الطريقة</span><h2>الطرفين بيكسبوا</h2>
     <p>البايع بيفضّي مكان وبيكسب فلوس، والمشتري بياخد حاجة شغالة بجزء من تمنها.</p></div></div>
     <div class="duo">
       <div class="duo-col">
@@ -575,7 +616,7 @@
 
 <section id="safety" class="sec sec-tint">
   <div class="wrap">
-    <div class="sec-hd"><div><span class="lbl">الأمان</span><h2>إزاي بنحميك</h2></div></div>
+    <div class="sec-hd center"><div><span class="lbl">الأمان</span><h2>إزاي بنحميك</h2></div></div>
     <div class="four">
       <div class="assure">
         <svg class="i i-lg" viewBox="0 0 24 24"><path d="M12 3.5l7 2.8v5.4c0 4-2.8 7.2-7 8.8-4.2-1.6-7-4.8-7-8.8V6.3z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg>
@@ -634,6 +675,16 @@
 
 <div class="ovl" id="authOvl" role="dialog" aria-modal="true" aria-labelledby="authTtl">
   <div class="sheet otp">
+    <div class="vok" id="authOk" role="status" aria-live="polite">
+      <div class="vok-mk">
+        <svg viewBox="0 0 52 52" aria-hidden="true">
+          <circle class="circ" cx="26" cy="26" r="24" />
+          <path class="tick" d="M15 27l8 8 15-16" />
+        </svg>
+      </div>
+      <b>تم التوثيق</b>
+      <span id="authOkTo"></span>
+    </div>
     <button class="x" id="authX" aria-label="إغلاق"></button>
     <h2 id="authTtl">وثّق رقمك قبل ما تنشر</h2>
     <p>بنبعتلك كود عشان نتأكد إن الرقم بتاعك — ده اللي بيخلي المشترين يثقوا في الإعلان، وبيمنع الإعلانات الوهمية.</p>
@@ -1046,6 +1097,7 @@
       authResolve=resolve;
       $('stepSend').style.display=''; $('stepCode').style.display='none';
       $('authErr').classList.remove('on'); $('codeErr').classList.remove('on');
+      $('authOk').classList.remove('on');
       $('authCode').value='';
       if(T.mode==='local'){
         $('demoNote').style.display='';
@@ -1148,9 +1200,14 @@
     T.auth.confirm(code).then(function(){
       var c=T.auth.contact;
       if(c && authChannel==='phone' && !$('pPhone').value.trim()) $('pPhone').value=c;
-      closeAuth(true);
-      drawAll();
-      toast('رقمك اتوثّق ✓',false);
+      /* شاشة نجاح قصيرة قبل ما نقفل — بتطمّن المستخدم إن الخطوة خلصت */
+      $('authOkTo').textContent = c || '';
+      $('authOk').classList.add('on');
+      setTimeout(function(){
+        closeAuth(true);
+        drawAll();
+        toast('رقمك اتوثّق ✓',false);
+      },1500);
     }).catch(function(err){
       var m=String(err.message||err);
       showErr('codeErr', /expired/i.test(m) ? 'الكود انتهت صلاحيته — ابعت واحد جديد'
@@ -1162,6 +1219,7 @@
   }
   $('authConfirm').addEventListener('click',confirmCode);
   $('authCode').addEventListener('keydown',function(e){ if(e.key==='Enter') confirmCode(); });
+  /* الكود ٦ أرقام — أول ما يكتمل بنأكد تلقائياً */
   $('authCode').addEventListener('input',function(){
     this.value=en(this.value).replace(/\D/g,'');
     if(this.value.length===6) confirmCode();
@@ -1233,10 +1291,8 @@
   function drawTip(){
     var c=$('pCat').value, cd=$('pCond').value, box=$('tip');
     if(!c||!cd){ box.classList.remove('on'); return; }
-    var base=Math.round(catOf(c).base*MKT[mkt].scale);
-    var mid=Math.round(base*COND[cd].f/10)*10;
-    box.innerHTML=ic('alert')+'<span>السعر المتداول لـ<b> '+catName(c)+' </b>بحالة<b> '+COND[cd].label+' </b>حوالي '
-      +'<b>'+money(Math.round(mid*.8/10)*10)+' – '+money(Math.round(mid*1.2/10)*10)+' '+MKT[mkt].cur+'</b>. رقم استرشادي — إنت حر تحط اللي شايفه.</span>';
+    box.innerHTML=ic('alert')+'<span><b>قبل ما تسعّر:</b> دوّر على نفس الموديل في '
+      +'المعروض وشوف بيتباع بكام. السعر الواقعي بيخلي الإعلان يتباع أسرع.</span>';
     box.classList.add('on');
   }
 

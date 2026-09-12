@@ -253,8 +253,8 @@
         return 'الطريقة دي مش متاحة حالياً — جرّب طريقة تانية.';
       if (/network|fetch|failed to fetch/i.test(m))
         return 'في مشكلة في الاتصال — اتأكد من النت وجرّب تاني.';
-      if (/already registered|already been/i.test(m))
-        return 'الإيميل ده مستخدم قبل كده — جرّب تسجّل الدخول بيه.';
+      if (/already registered|already been|already exists/i.test(m))
+        return 'الإيميل ده مربوط بحساب قديم — بنبعتلك الكود عليه.';
       return m;
     },
 
@@ -274,17 +274,26 @@
 
       var payload = isEmail ? { email: value } : { phone: value };
       var say = DB.auth._say;
+      /* بيرجّع لتسجيل دخول عادي بالـ OTP على نفس الإيميل/الرقم */
+      function freshOtp() {
+        return sb.auth.signInWithOtp(payload).then(function (r2) {
+          if (r2.error) throw new Error(say(r2.error.message));
+          pending.fresh = true;
+          return r2;
+        });
+      }
+
       return sb.auth.updateUser(payload).then(function (res) {
         if (res.error) {
-          /* لو مفيش جلسة أصلاً، ابدأ واحدة جديدة بالـ OTP */
-          if (/session|not authenticated/i.test(res.error.message)) {
-            return sb.auth.signInWithOtp(payload).then(function (r2) {
-              if (r2.error) throw new Error(say(r2.error.message));
-              pending.fresh = true;
-              return r2;
-            });
+          var m = res.error.message || '';
+          /* مفيش جلسة أصلاً */
+          if (/session|not authenticated/i.test(m)) return freshOtp();
+          /* الإيميل/الرقم مربوط بحساب قديم — نسجّل دخول عليه
+             بدل ما نوقف المستخدم */
+          if (/already registered|already been|already exists|taken/i.test(m)) {
+            return freshOtp();
           }
-          throw new Error(say(res.error.message));
+          throw new Error(say(m));
         }
         return res;
       });
