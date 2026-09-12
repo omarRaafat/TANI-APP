@@ -150,6 +150,17 @@
     },
 
     /* ── حذف إعلان ── */
+    /* ── تسجيل اهتمام مشتري (ضغط على "كلّم البايع") ──
+       بيتسجّل عشان البايع يعرف مين اهتم، وعشان تعرف أنهي
+       إعلانات بتجيب تواصل فعلاً. الفشل هنا مايوقفش المستخدم. */
+    logContact: function (listingId, channel) {
+      if (DB.mode === 'local' || !DB.userId) return Promise.resolve(null);
+      return sb.from('contact_events')
+        .insert({ listing_id: listingId, buyer_id: DB.userId, channel: channel })
+        .then(function (res) { return res.error ? null : res; })
+        ['catch'](function () { return null; });
+    },
+
     /* ── تعديل إعلان ── */
     update: function (id, draft) {
       if (DB.mode === 'local') {

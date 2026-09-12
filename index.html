@@ -241,36 +241,93 @@
   .fchip:hover .i{stroke:var(--on-dark)}
 
   /* ═══ CARD ═══ */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(244px,1fr));gap:var(--s4)}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(18,23,26,.04);transition:border-color .18s,box-shadow .18s,transform .18s}
-  .card:hover{border-color:var(--pine-600);box-shadow:0 10px 26px -12px rgba(13,59,49,.30);transform:translateY(-3px)}
-  .shot{position:relative;aspect-ratio:4/3;background:var(--sand-100);cursor:pointer;overflow:hidden}
-  .shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:var(--s5) var(--s4)}
+
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r3);
+    overflow:hidden;display:flex;flex-direction:column;
+    box-shadow:0 1px 2px rgba(18,23,26,.05);
+    transition:border-color .22s,box-shadow .22s,transform .22s;
+  }
+  .card:hover{
+    border-color:transparent;
+    box-shadow:0 14px 32px -14px rgba(13,59,49,.28),0 0 0 1px rgba(13,59,49,.10);
+    transform:translateY(-4px);
+  }
+
+  /* صورة أطول شوية — المنتجات بتبان أوضح من 4/3 */
+  .shot{position:relative;aspect-ratio:5/4;background:var(--sand-100);cursor:pointer;overflow:hidden}
+  .shot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s cubic-bezier(.2,.7,.3,1)}
+  .card:hover .shot img{transform:scale(1.045)}
   .shot-none{width:100%;height:100%;display:grid;place-items:center;color:var(--ink-300)}
-  .badge{position:absolute;top:var(--s2);inset-inline-start:var(--s2);display:inline-flex;align-items:center;gap:.3rem;font-size:var(--t-xs);font-weight:500;background:rgba(255,255,255,.94);border-radius:var(--r1);padding:.16rem .5rem;color:var(--ink-700)}
+  /* تدرّج خفيف تحت الصورة عشان الشارات تفضل مقروءة */
+  .shot::after{
+    content:'';position:absolute;inset-inline:0;bottom:0;height:22%;pointer-events:none;
+    background:linear-gradient(to top,rgba(9,32,26,.16),transparent);
+  }
+
+  .badge{
+    position:absolute;top:var(--s2);inset-inline-start:var(--s2);z-index:1;
+    display:inline-flex;align-items:center;gap:.35rem;font-size:var(--t-xs);font-weight:500;
+    background:rgba(255,255,255,.92);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    border-radius:var(--rp);padding:.24rem .6rem;color:var(--ink-700);
+    box-shadow:0 2px 8px -2px rgba(18,23,26,.18);
+  }
   .badge .d{width:6px;height:6px;border-radius:50%;flex:none}
   .d-new{background:var(--ok-600)} .d-good{background:#C99A22} .d-used{background:var(--ink-300)}
-  .pcount{position:absolute;bottom:var(--s2);inset-inline-end:var(--s2);background:rgba(11,38,33,.82);color:var(--on-dark);font-size:var(--t-xs);border-radius:var(--r1);padding:.12rem .4rem;display:inline-flex;align-items:center;gap:.25rem;font-variant-numeric:tabular-nums}
+
+  .pcount{
+    position:absolute;bottom:var(--s2);inset-inline-end:var(--s2);z-index:1;
+    background:rgba(9,32,26,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    color:var(--on-dark);font-size:var(--t-xs);border-radius:var(--rp);padding:.2rem .5rem;
+    display:inline-flex;align-items:center;gap:.3rem;font-variant-numeric:tabular-nums;
+  }
   .pcount .i{width:12px;height:12px;stroke:var(--on-dark)}
-  .save-btn{position:absolute;top:var(--s2);inset-inline-end:var(--s2);width:30px;height:30px;background:rgba(255,255,255,.94);border:0;border-radius:var(--rp);display:grid;place-items:center;cursor:pointer;transition:.15s}
-  .save-btn .i{width:16px;height:16px;stroke:var(--ink-600)}
-  .save-btn:hover{background:#fff}
+
+  .save-btn{
+    position:absolute;top:var(--s2);inset-inline-end:var(--s2);z-index:1;
+    width:34px;height:34px;background:rgba(255,255,255,.92);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    border:0;border-radius:var(--rp);display:grid;place-items:center;cursor:pointer;
+    box-shadow:0 2px 8px -2px rgba(18,23,26,.18);transition:transform .18s,background .18s;
+  }
+  .save-btn .i{width:17px;height:17px;stroke:var(--ink-600);transition:stroke .18s,fill .18s}
+  .save-btn:hover{background:#fff;transform:scale(1.08)}
   .save-btn[aria-pressed="true"] .i{stroke:var(--accent-500);fill:var(--accent-500)}
-  .card-b{padding:var(--s3);display:flex;flex-direction:column;flex:1;gap:var(--s2)}
-  .card-t{font-size:var(--t-base);font-weight:500;line-height:1.45;cursor:pointer;min-height:2.9em}
+
+  .card-b{padding:var(--s3);display:flex;flex-direction:column;flex:1;gap:.35rem}
+  .card-t{
+    font-size:var(--t-sm);font-weight:400;line-height:1.55;cursor:pointer;min-height:2.9em;
+    color:var(--ink-700);transition:color .15s;margin-top:.2rem;
+  }
   .card-t:hover{color:var(--pine-700)}
   .card-m{display:flex;align-items:center;gap:.3rem;font-size:var(--t-xs);color:var(--ink-400)}
   .card-m .i{width:13px;height:13px;stroke:var(--ink-400)}
   .card-m .sep{opacity:.5}
-  .price-l{display:flex;align-items:baseline;gap:var(--s2);flex-wrap:wrap}
-  .price{font-family:'Changa',sans-serif;font-size:var(--t-md);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
-  .price .cur{font-family:'Tajawal',sans-serif;font-size:var(--t-xs);font-weight:400;color:var(--ink-600)}
-  .price-was{font-size:var(--t-xs);color:var(--ink-400);text-decoration:line-through;font-variant-numeric:tabular-nums}
-  .price-off{font-size:var(--t-xs);color:var(--ok-700);background:var(--ok-050);border-radius:var(--r1);padding:.05rem .35rem;font-weight:500}
-  .card-f{display:flex;align-items:center;gap:var(--s2);border-top:1px solid var(--line);padding-top:var(--s3);margin-top:auto}
-  .who{width:26px;height:26px;border-radius:var(--rp);background:var(--sand-100);display:grid;place-items:center;font-family:'Changa',sans-serif;font-size:var(--t-xs);font-weight:700;color:var(--pine-700);flex:none}
+
+  /* السعر أبرز حاجة في الكارت */
+  .price-l{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+  .price{
+    font-family:'Changa',sans-serif;font-size:1.42rem;font-weight:700;
+    font-variant-numeric:tabular-nums;line-height:1.15;color:var(--pine-800);
+    letter-spacing:-.01em;
+  }
+  .price .cur{font-family:'Tajawal',sans-serif;font-size:var(--t-xs);font-weight:400;color:var(--ink-600);margin-inline-start:.15rem}
+  .price-was{display:block;font-size:var(--t-xs);color:var(--ink-400);text-decoration:line-through;font-variant-numeric:tabular-nums;margin-top:-.15rem}
+  .price-off{
+    font-size:var(--t-xs);color:var(--ok-700);background:var(--ok-050);
+    border-radius:var(--rp);padding:.14rem .5rem;font-weight:600;
+  }
+
+  .card-f{display:flex;align-items:center;gap:var(--s2);border-top:1px solid var(--line);padding-top:var(--s2);margin-top:auto}
+  .who{
+    width:24px;height:24px;border-radius:var(--rp);
+    background:linear-gradient(135deg,var(--sand-100),var(--sand-200));
+    display:grid;place-items:center;font-family:'Changa',sans-serif;font-size:.68rem;
+    font-weight:700;color:var(--pine-700);flex:none;
+  }
   .who-n{font-size:var(--t-xs);color:var(--ink-600);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .card-f .btn{margin-inline-start:auto;padding:.4rem .8rem;font-size:var(--t-xs)}
+  .card-f .btn{margin-inline-start:auto;padding:.44rem .9rem;font-size:var(--t-xs);border-radius:var(--rp)}
   .own{font-size:var(--t-xs);color:var(--ok-700);font-weight:500;margin-inline-start:auto}
 
   .empty{
@@ -353,11 +410,13 @@
   .sheet{background:var(--surface);border-radius:var(--r3);max-width:860px;width:100%;max-height:88vh;overflow:auto;position:relative;box-shadow:var(--sh3)}
   .x{position:absolute;top:var(--s3);inset-inline-end:var(--s3);z-index:2;background:rgba(255,255,255,.95);border:1px solid var(--line);width:32px;height:32px;border-radius:var(--rp);display:grid;place-items:center;cursor:pointer}
   .x .i{width:16px;height:16px}
-  .sheet-g{display:grid;grid-template-columns:1.1fr .9fr}
-  .gal{background:var(--sand-100)}
-  .gal-main{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
-  .gal-none{width:100%;aspect-ratio:4/3;display:grid;place-items:center;color:var(--ink-300)}
-  .gal-strip{display:flex;gap:var(--s2);padding:var(--s2);flex-wrap:wrap}
+  .sheet-g{display:grid;grid-template-columns:1.1fr .9fr;align-items:stretch}
+  /* عمود الصور بيتمدد مع طول التفاصيل — الصورة بتملا الفراغ
+     بدل ما تسيب مساحة فاضية تحتها */
+  .gal{background:var(--sand-100);display:flex;flex-direction:column;min-height:100%}
+  .gal-main{width:100%;flex:1;min-height:260px;object-fit:cover;display:block}
+  .gal-none{width:100%;flex:1;min-height:260px;display:grid;place-items:center;color:var(--ink-300)}
+  .gal-strip{display:flex;gap:var(--s2);padding:var(--s2);flex-wrap:wrap;flex:none}
   .gal-strip img{width:52px;height:52px;object-fit:cover;border-radius:var(--r1);cursor:pointer;border:2px solid transparent}
   .gal-strip img[aria-current="true"]{border-color:var(--accent-500)}
   .sheet-s{padding:var(--s5)}
@@ -418,6 +477,27 @@
     font-size:var(--t-xs);color:var(--warn-700);margin-top:var(--s4);line-height:1.6;
   }
 
+  /* ── التواصل مع البايع ── */
+  .contact-box{margin-top:var(--s2)}
+  .contact-hint{font-size:var(--t-xs);color:var(--ink-400);text-align:center;margin-top:var(--s2);line-height:1.6}
+  .contact-lbl{font-size:var(--t-xs);letter-spacing:.14em;color:var(--ink-400);margin-bottom:var(--s1)}
+  .contact-num{
+    font-family:'Changa',sans-serif;font-size:1.35rem;font-weight:700;color:var(--ink-900);
+    background:var(--sand-050);border:1px solid var(--line);border-radius:var(--r1);
+    padding:var(--s3);text-align:center;margin-bottom:var(--s3);font-variant-numeric:tabular-nums;
+    user-select:all;
+  }
+  .btn-wa{background:#1DA851;color:#fff;border-color:#1DA851}
+  .btn-wa:hover{background:#178F44;border-color:#178F44}
+  .btn-wa .i{stroke:#fff}
+  .safety{
+    display:flex;gap:var(--s2);background:var(--warn-050);border:1px solid #EBDCBA;
+    border-radius:var(--r1);padding:var(--s3);font-size:var(--t-xs);color:var(--warn-700);
+    line-height:1.7;margin-top:var(--s3);
+  }
+  .safety .i{stroke:var(--warn-700);flex:none;margin-top:2px}
+  .safety b{font-family:'Changa',sans-serif}
+
   /* ── تحذير الوضع المحلي ── */
   .degraded{
     display:none;position:sticky;top:60px;z-index:55;
@@ -463,6 +543,8 @@
 
   @media(max-width:900px){
     .duo,.composer,.sheet-g{grid-template-columns:1fr}
+    /* لما الأعمدة بتتراص فوق بعض، الصورة ترجع لنسبتها الطبيعية */
+    .gal-main,.gal-none{flex:none;aspect-ratio:4/3;min-height:0}
     .preview-col{position:static;max-width:300px}
     .ft-g{grid-template-columns:1fr 1fr}
     .ft-g > :first-child{grid-column:1/-1}
@@ -507,10 +589,6 @@
       <a href="#post" class="btn btn-primary">
         <svg class="i i-sm" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></svg>
         <span class="hide-sm">اعرض حاجتك</span>
-      </a>
-      <a href="cart.html" class="btn btn-ondark cart-b" aria-label="السلة">
-        <svg class="i i-sm" viewBox="0 0 24 24"><path d="M3.5 4.5h2l2.2 10h9.6l1.9-7.2H6.4"/><circle cx="9.5" cy="18.5" r="1.3"/><circle cx="16.5" cy="18.5" r="1.3"/></svg>
-        <span class="cnt" id="cartN">٠</span>
       </a>
     </div>
   </div>
@@ -560,7 +638,7 @@
   <div class="wrap">
     <div class="sec-hd center">
       <div><span class="lbl">المعروض</span><h2>إعلانات الناس</h2>
-      <p>كل إعلان رفعه صاحبه بصوره وحالته وسعره. الدفع عند الاستلام متاح.</p></div>
+      <p>كل إعلان رفعه صاحبه بصوره وحالته وسعره. تتواصل مع البايع على طول.</p></div>
     </div>
     <div class="toolbar">
       <select class="sel" id="fCond" aria-label="الحالة">
@@ -675,13 +753,13 @@
         <h3><svg class="i" viewBox="0 0 24 24"><path d="M12 3.5v11M8 10.5l4 4 4-4"/><path d="M4.5 18.5h15"/></svg>لو عندك حاجة</h3>
         <div class="stepl"><span class="stepn">٠١</span><div><h4>صوّرها وحطها</h4><p>٣ صور وعنوان وسعر. الإعلان بيظهر فوراً ومفيش رسوم عليك.</p></div></div>
         <div class="stepl"><span class="stepn">٠٢</span><div><h4>استنى الطلبات</h4><p>أول ما حد يطلبها هيوصلك إشعار على الرقم اللي كتبته. إنت اللي بتقرر تبيع لمين.</p></div></div>
-        <div class="stepl"><span class="stepn">٠٣</span><div><h4>سلّم واستلم فلوسك</h4><p>المندوب بياخد القطعة ويوصّلها، وفلوسك بتوصلك بعد ما المشتري يوافق.</p></div></div>
+        <div class="stepl"><span class="stepn">٠٣</span><div><h4>اتفق وسلّم</h4><p>المشتري هيكلّمك على واتساب أو بالتليفون. اتفقوا على المعاينة والسعر وسلّم إيد بإيد.</p></div></div>
       </div>
       <div class="duo-col">
         <h3><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>لو بتدوّر على حاجة</h3>
         <div class="stepl"><span class="stepn">٠١</span><div><h4>دوّر وفلتر</h4><p>فلتر بالقسم والحالة والمدينة والسعر. كل إعلان مكتوب فيه العيوب لو فيه.</p></div></div>
-        <div class="stepl"><span class="stepn">٠٢</span><div><h4>اطلب واستلم</h4><p>ضيف للسلة وكمّل الطلب. الدفع عند الاستلام متاح في مصر والسعودية.</p></div></div>
-        <div class="stepl"><span class="stepn">٠٣</span><div><h4>افحص قبل ما تدفع</h4><p>افحص القطعة قدام المندوب. لو مش زي الوصف، ارفضها ومتدفعش.</p></div></div>
+        <div class="stepl"><span class="stepn">٠٢</span><div><h4>كلّم البايع</h4><p>دوس "كلّم البايع" وهيظهرلك رقمه. اتفقوا على الميعاد والمكان.</p></div></div>
+        <div class="stepl"><span class="stepn">٠٣</span><div><h4>افحص قبل ما تدفع</h4><p>اتقابلوا في مكان عام، افحص القطعة كويس، ومتدفعش غير لما تتأكد إنها زي الوصف.</p></div></div>
       </div>
     </div>
   </div>
@@ -693,11 +771,11 @@
     <div class="four">
       <div class="assure">
         <svg class="i i-lg" viewBox="0 0 24 24"><path d="M12 3.5l7 2.8v5.4c0 4-2.8 7.2-7 8.8-4.2-1.6-7-4.8-7-8.8V6.3z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg>
-        <h3>افحص قبل ما تدفع</h3><p>المندوب بيستنى معاك تفحص القطعة. لو مش زي الوصف، ارفضها ومتدفعش.</p>
+        <h3>افحص قبل ما تدفع</h3><p>اتقابل مع البايع في مكان عام ونهاراً، وافحص القطعة كويس قبل ما تدفع أي حاجة.</p>
       </div>
       <div class="assure">
         <svg class="i i-lg" viewBox="0 0 24 24"><rect x="3.5" y="6.5" width="17" height="11" rx="2"/><path d="M3.5 10.5h17"/><path d="M7 14.5h3.5"/></svg>
-        <h3>فلوس البايع محجوزة</h3><p>مش بنحوّل للبايع غير بعد ما المشتري يستلم ويوافق. لو حصلت مشكلة الفلوس بترجع.</p>
+        <h3>متحوّلش قبل المعاينة</h3><p>متحوّلش فلوس قبل ما تشوف القطعة بنفسك. أي حد يطلب تحويل مقدّم — بلّغنا عنه.</p>
       </div>
       <div class="assure">
         <svg class="i i-lg" viewBox="0 0 24 24"><path d="M12 4.5l2.2 4.5 5 .7-3.6 3.5.85 5-4.45-2.35L7.55 18.2l.85-5L4.8 9.7l5-.7z"/></svg>
@@ -723,7 +801,7 @@
       </div>
       <div class="ft-c"><h4>الموقع</h4><ul>
         <li><a href="#browse">المعروض</a></li><li><a href="#post">اعرض حاجتك</a></li>
-        <li><a href="#how">إزاي بيشتغل</a></li><li><a href="cart.html">السلة</a></li>
+        <li><a href="#how">إزاي بيشتغل</a></li><li><a href="#safety">الأمان</a></li>
       </ul></div>
       <div class="ft-c"><h4>الأقسام</h4><ul id="ftCats"></ul></div>
       <div class="ft-c"><h4>تواصل</h4><ul>
@@ -760,7 +838,7 @@
     </div>
     <button class="x" id="authX" aria-label="إغلاق"></button>
     <h2 id="authTtl">وثّق رقمك قبل ما تنشر</h2>
-    <p>بنبعتلك كود عشان نتأكد إن الرقم بتاعك — ده اللي بيخلي المشترين يثقوا في الإعلان، وبيمنع الإعلانات الوهمية.</p>
+    <p id="authWhy">بنبعتلك كود عشان نتأكد إن الرقم بتاعك — ده اللي بيخلي المشترين يثقوا في الإعلان، وبيمنع الإعلانات الوهمية.</p>
 
     <div id="stepSend">
       <div class="otp-tabs" id="authTabs">
@@ -791,7 +869,7 @@
     </div>
   </div>
 </div>
-<div class="toast" id="toast"><svg class="i i-sm" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span id="toastT"></span><a href="cart.html" id="toastA">السلة</a></div>
+<div class="toast" id="toast"><svg class="i i-sm" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span id="toastT"></span></div>
 
 <script>
 (function(){
@@ -807,6 +885,8 @@
     sofa:'<path d="M5 11.5V8a2 2 0 012-2h10a2 2 0 012 2v3.5"/><path d="M3.5 11.5a2 2 0 012 2v3h13v-3a2 2 0 012-2v6.5h-17z"/>',
     plug:'<path d="M9 3.5v4M15 3.5v4"/><path d="M6.5 7.5h11v3a5.5 5.5 0 01-11 0z"/><path d="M12 16v4.5"/>',
     phone:'<rect x="7.5" y="3" width="9" height="18" rx="2"/><path d="M11 18h2"/>',
+    chat:'<path d="M20 15.5a2 2 0 01-2 2H8l-4 3.5v-15a2 2 0 012-2h12a2 2 0 012 2z"/>',
+    shield:'<path d="M12 3l7 3v5.5c0 4.3-3 8-7 9.5-4-1.5-7-5.2-7-9.5V6z"/><path d="M9.5 12l1.8 1.8L15 10"/>',
     laptop:'<rect x="4.5" y="5.5" width="15" height="9.5" rx="1.5"/><path d="M2.5 18.5h19"/>',
     kid:'<path d="M6.5 12.5a5.5 5.5 0 0111 0z"/><path d="M12 12.5v4.5"/><circle cx="8.5" cy="19" r="1.4"/><circle cx="15.5" cy="19" r="1.4"/><path d="M12 12.5V4.5l4.5 2.6"/>',
     bike:'<circle cx="6" cy="16.5" r="3.3"/><circle cx="18" cy="16.5" r="3.3"/><path d="M6 16.5l4.2-7.5h4.6l3.2 7.5"/><path d="M9.2 9h4.8"/>',
@@ -946,16 +1026,18 @@
         + ((l.photos&&l.photos.length>1)?'<span class="pcount">'+ic('stack')+ar(l.photos.length)+'</span>':'')
       + '</div>'
       + '<div class="card-b">'
+        /* ترتيب الإعلانات المبوبة: السعر الأول — أهم معلومة للمشتري */
+        + '<div class="price-l"><span class="price">'+money(l.price)+' <span class="cur">'+cur(l)+'</span></span>'
+          + (o?'<span class="price-off">−٪'+ar(o)+'</span>':'')
+        + '</div>'
+        + (o?'<span class="price-was">'+money(l.was)+' '+cur(l)+'</span>':'')
         + '<h3 class="card-t clamp2" data-open="'+l.id+'">'+esc(l.title)+'</h3>'
         + '<p class="card-m">'+ic('pin')+esc(l.city)+'<span class="sep">·</span>'+since(l.createdAt)+'</p>'
-        + '<div class="price-l"><span class="price">'+money(l.price)+' <span class="cur">'+cur(l)+'</span></span>'
-          + (o?'<span class="price-was">'+money(l.was)+'</span><span class="price-off">−٪'+ar(o)+'</span>':'')
-        + '</div>'
         + '<div class="card-f"><span class="who">'+esc(String(l.sellerName||'؟').charAt(0))+'</span>'
           + '<span class="who-n">'+esc(l.sellerName)
             + (l.verified?' <span class="vbadge">'+ic('check')+'موثّق</span>':'')+'</span>'
           + (l.mine ? '<span class="own">إعلانك</span>'
-            : '<button class="btn '+(inCart?'btn-done':'btn-quiet')+'" data-add="'+l.id+'"'+(inCart?' disabled':'')+'>'+(inCart?'في السلة':'أضف')+'</button>')
+            : '<button class="btn btn-quiet" data-contact="'+l.id+'">كلّم البايع</button>')
         + '</div>'
       + '</div></article>';
   }
@@ -1008,14 +1090,29 @@
       : '';
   }
 
-  function drawCart(){ $('cartN').textContent=ar(DB.cart().length); }
+  function drawCart(){ /* السلة اتشالت — الموقع بقى وساطة بالتواصل المباشر */ }
+
+  /* الرقم المكتوب هو نفسه اللي الحساب اتوثّق بيه؟ */
+  function phoneMatchesAccount(){
+    if(!(T.auth && T.auth.verified && T.auth.contact)) return false;
+    var typed=$('pPhone') ? $('pPhone').value.trim() : '';
+    if(!typed) return false;
+    /* الحساب موثّق بإيميل مش برقم — فمفيش رقم نأكده */
+    if(String(T.auth.contact).indexOf('@')>-1) return false;
+    try{
+      return T.auth.normPhone(typed,mkt) === T.auth.normPhone(T.auth.contact,mkt);
+    }catch(e){ return false; }
+  }
 
   function drawVerify(){
     var h=$('vHint'); if(!h) return;
-    if(T.auth && T.auth.verified){
-      h.innerHTML='<span class="vbadge">'+ic('check')+'رقمك موثّق</span>';
+    if(phoneMatchesAccount()){
+      h.innerHTML='<span class="vbadge">'+ic('check')+'الرقم ده موثّق</span>';
+    } else if(T.auth && T.auth.verified){
+      /* الحساب موثّق، بس مش بالرقم ده */
+      h.textContent='حسابك موثّق. الرقم ده هيظهر للمشترين عشان يتواصلوا بيك.';
     } else {
-      h.textContent='هنطلب منك توثيق الرقم بكود قبل النشر — مرة واحدة بس.';
+      h.textContent='هنطلب منك توثيق حسابك بكود قبل النشر — مرة واحدة بس.';
     }
   }
   function drawAll(){ drawMetrics(); drawRail(); drawGrid(); drawOwn(); drawCart(); drawVerify(); }
@@ -1065,7 +1162,6 @@
   var tTimer=null;
   function toast(msg,link){
     $('toastT').innerHTML=msg;
-    $('toastA').style.display = link===false?'none':'';
     $('toast').classList.add('on');
     clearTimeout(tTimer);
     tTimer=setTimeout(function(){ $('toast').classList.remove('on'); },3200);
@@ -1079,8 +1175,53 @@
       DB.setFavs(fv); f.setAttribute('aria-pressed',String(i===-1)); return;
     }
     var o=e.target.closest('[data-open]'); if(o){ openSheet(o.getAttribute('data-open')); return; }
+    var c=e.target.closest('[data-contact]');
+    if(c){ askContact(c.getAttribute('data-contact'),c); return; }
+    var ch=e.target.closest('[data-ch]');
+    if(ch){ T.logContact(ch.getAttribute('data-lid'),ch.getAttribute('data-ch')); }
     var a=e.target.closest('[data-add]'); if(a){ addCart(a.getAttribute('data-add'),a); }
   });
+
+  /* ══ التواصل مع البايع ══ */
+  function waLink(phone,title){
+    var p=en(String(phone||'')).replace(/\D/g,'');
+    if(p.charAt(0)==='0') p=p.slice(1);
+    if(p.indexOf('20')!==0 && p.indexOf('966')!==0) p=(mkt==='EG'?'20':'966')+p;
+    var msg='السلام عليكم، شفت إعلانك على تاني: '+title+' — لسه متاح؟';
+    return 'https://wa.me/'+p+'?text='+encodeURIComponent(msg);
+  }
+
+  function revealContact(id,box){
+    var l=DB.byId?DB.byId(id):null;
+    if(!l) l=DB.all().filter(function(x){return x.id===id;})[0];
+    if(!l||!box) return;
+    var tel=en(String(l.sellerPhone||'')).replace(/\D/g,'');
+    box.innerHTML =
+      '<p class="contact-lbl">رقم البايع</p>'
+      +'<p class="contact-num" dir="ltr">'+esc(l.sellerPhone||'')+'</p>'
+      +'<a class="btn btn-wa btn-lg btn-block" target="_blank" rel="noopener"'
+        +' href="'+waLink(l.sellerPhone,l.title)+'" data-ch="whatsapp" data-lid="'+id+'">'
+        +ic('chat','i-sm')+' كلّمه على واتساب</a>'
+      +'<a class="btn btn-quiet btn-lg btn-block" style="margin-top:var(--s2)"'
+        +' href="tel:'+esc(tel)+'" data-ch="call" data-lid="'+id+'">'
+        +ic('phone','i-sm')+' اتصل بيه</a>'
+      +'<div class="safety">'+ic('shield','i-sm')
+        +'<span><b>خلي بالك:</b> اتقابلوا في مكان عام، افحص القطعة كويس قبل ما تدفع، '
+        +'ومتحوّلش فلوس قبل ما تشوفها.</span></div>';
+  }
+
+  function askContact(id,btn){
+    var box = btn.closest('.contact-box');
+    /* في الكارت الصغير مفيش مساحة للوحة — بنفتح صفحة الإعلان
+       واللوحة بتظهر هناك كاملة */
+    if(!box){ openSheet(id); return; }
+    /* التواصل للموثّقين بس — بيقلل الأرقام الوهمية والمقالب */
+    var gate = T.auth.verified ? Promise.resolve(true) : openAuth('contact');
+    gate.then(function(ok){
+      if(!ok) return;
+      revealContact(id,box);
+    });
+  }
 
   function addCart(id,btn){
     var l=DB.all().filter(function(x){return x.id===id;})[0]; if(!l) return;
@@ -1131,7 +1272,11 @@
         +(l.mine
           ? '<button class="btn btn-quiet btn-lg btn-block" data-edit="'+l.id+'">'+ic('pen','i-sm')+' عدّل الإعلان</button>'
             +'<button class="btn btn-quiet btn-lg btn-block" data-del="'+l.id+'" style="margin-top:var(--s2)">'+ic('trash','i-sm')+' شيل الإعلان</button>'
-          : '<button class="btn '+(inCart?'btn-done':'btn-dark')+' btn-lg btn-block" data-add="'+l.id+'"'+(inCart?' disabled':'')+'>'+(inCart?'في السلة':'أضف للسلة')+'</button>')
+          : '<div class="contact-box" id="cbox-'+l.id+'">'
+              +'<button class="btn btn-dark btn-lg btn-block" data-contact="'+l.id+'">'
+                +ic('chat','i-sm')+' كلّم البايع</button>'
+              +'<p class="contact-hint">هنوريك رقم البايع عشان تتفقوا على المعاينة والتسليم.</p>'
+            +'</div>')
       +'</div></div>';
 
     $('ovl').classList.add('on');
@@ -1149,6 +1294,10 @@
   $('ovl').addEventListener('click',function(e){ if(e.target===$('ovl')) closeSheet(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&$('ovl').classList.contains('on')) closeSheet(); });
   $('sheet').addEventListener('click',function(e){
+    var c=e.target.closest('[data-contact]');
+    if(c){ askContact(c.getAttribute('data-contact'),c); return; }
+    var ch=e.target.closest('[data-ch]');
+    if(ch){ T.logContact(ch.getAttribute('data-lid'),ch.getAttribute('data-ch')); return; }
     var a=e.target.closest('[data-add]'); if(a){ addCart(a.getAttribute('data-add'),a); return; }
     var ed=e.target.closest('[data-edit]');
     if(ed){ startEdit(ed.getAttribute('data-edit')); closeSheet(); return; }
@@ -1172,9 +1321,23 @@
   var authChannel='phone', authResolve=null, resendAt=0, resendTimer=null;
   $('authX').innerHTML=ic('x');
 
-  function openAuth(){
+  var AUTH_COPY = {
+    publish: {
+      t:'وثّق رقمك قبل ما تنشر',
+      p:'بنبعتلك كود عشان نتأكد إن الرقم بتاعك — ده اللي بيخلي المشترين يثقوا في الإعلان، وبيمنع الإعلانات الوهمية.'
+    },
+    contact: {
+      t:'وثّق رقمك عشان تتواصل',
+      p:'بنبعتلك كود عشان نتأكد إنك شخص حقيقي — ده بيحمي الباعة من الاتصالات الوهمية، وبيخليهم يردوا عليك بثقة.'
+    }
+  };
+
+  function openAuth(purpose){
     return new Promise(function(resolve){
       authResolve=resolve;
+      var c = AUTH_COPY[purpose] || AUTH_COPY.publish;
+      $('authTtl').textContent = c.t;
+      $('authWhy').textContent = c.p;
       $('stepSend').style.display=''; $('stepCode').style.display='none';
       $('authErr').classList.remove('on'); $('codeErr').classList.remove('on');
       $('authOk').classList.remove('on');
@@ -1183,8 +1346,12 @@
         $('demoNote').style.display='';
         $('demoNote').textContent='وضع تجريبي: Supabase مش متظبط، فأي كود هيعدّي. انسخ tani-config.example.js باسم tani-config.js وحط مفاتيحك عشان الـ OTP يشتغل فعلاً.';
       }
-      var pre=$('pPhone').value.trim();
-      if(pre && authChannel==='phone') $('authId').value=pre;
+      /* نملا الرقم من نموذج النشر بس — المشتري بيوثّق برقمه هو */
+      $('authId').value='';
+      if(purpose!=='contact'){
+        var pre=$('pPhone').value.trim();
+        if(pre && authChannel==='phone') $('authId').value=pre;
+      }
       $('authOvl').classList.add('on');
       document.body.style.overflow='hidden';
       setTimeout(function(){ $('authId').focus(); },60);
@@ -1412,6 +1579,8 @@
     $(id).addEventListener('input',function(){ ok(id); drawPrev(); });
     $(id).addEventListener('change',drawPrev);
   });
+  /* التلميح بيتغير مع الرقم المكتوب */
+  $('pPhone').addEventListener('input',drawVerify);
   ['pCat','pCond'].forEach(function(id){
     $(id).addEventListener('change',function(){ ok(id); drawTip(); drawPrev(); });
   });
@@ -1477,7 +1646,7 @@
 
     var gate = TaniVerify.require('publish').then(function(human){
       if(!human) return false;
-      return T.auth.verified ? true : openAuth();
+      return T.auth.verified ? true : openAuth('publish');
     });
     gate.then(function(okToGo){
       if(!okToGo) return;
