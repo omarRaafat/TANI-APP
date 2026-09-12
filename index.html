@@ -123,6 +123,50 @@
     content:'';position:absolute;inset-inline-end:-8%;top:-30%;width:52%;aspect-ratio:1;pointer-events:none;
     background:radial-gradient(circle,rgba(217,84,43,.20) 0%,rgba(217,84,43,0) 68%);
   }
+
+  /* ── خلفية متحركة: قطع بتنتقل من صاحبها لحد تاني ──
+     كلها CSS — مفيش صور ولا فيديو، فبتحمّل فوراً */
+  .hero-fx{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .hero-fx i{
+    position:absolute;display:block;border-radius:7px;
+    border:1.5px solid rgba(244,242,236,.38);
+    background:rgba(244,242,236,.08);
+    animation:drift linear infinite;
+    will-change:transform,opacity;opacity:0;
+  }
+  /* شكل تاني: دايرة (تنويع بصري) */
+  .hero-fx i:nth-child(3n){border-radius:50%}
+  /* شكل تالت: بلمسة برتقالي */
+  .hero-fx i:nth-child(4n){border-color:rgba(232,114,76,.55);background:rgba(232,114,76,.12)}
+
+  @keyframes drift{
+    0%   {transform:translate3d(0,0,0) rotate(0deg);opacity:0}
+    12%  {opacity:1}
+    88%  {opacity:1}
+    100% {transform:translate3d(calc(-1 * var(--dx,60vw)),var(--dy,-40px),0) rotate(var(--rot,140deg));opacity:0}
+  }
+
+  /* حلقات إعادة الاستخدام — بتتوسّع ببطء من ناحية الهيدلاين */
+  .hero-fx u{
+    position:absolute;display:block;border-radius:50%;
+    border:1px solid rgba(244,242,236,.20);
+    animation:ripple 9s ease-out infinite;
+    opacity:0;
+  }
+  @keyframes ripple{
+    0%  {transform:scale(.25);opacity:0}
+    18% {opacity:.5}
+    100%{transform:scale(1.9);opacity:0}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    .hero-fx{display:none}
+  }
+  @media(max-width:680px){
+    /* أقل عناصر على الموبايل عشان الأداء */
+    .hero-fx i:nth-child(n+7),.hero-fx u:nth-child(n+3){display:none}
+  }
+
   .hero > .wrap{position:relative;z-index:1}
   .hero-in{
     position:relative;z-index:1;padding-block:var(--s7) var(--s6);
@@ -374,6 +418,15 @@
     font-size:var(--t-xs);color:var(--warn-700);margin-top:var(--s4);line-height:1.6;
   }
 
+  /* ── تحذير الوضع المحلي ── */
+  .degraded{
+    display:none;position:sticky;top:60px;z-index:55;
+    background:var(--warn-050);border-bottom:1px solid #EBDCBA;color:var(--warn-700);
+    font-size:var(--t-sm);line-height:1.6;padding:var(--s3) var(--s4);text-align:center;
+  }
+  .degraded.on{display:block}
+  .degraded b{font-family:'Changa',sans-serif}
+
   /* ── شاشة نجاح التوثيق ── */
   .vok{
     position:absolute;inset:0;background:var(--surface);border-radius:var(--r3);
@@ -463,7 +516,26 @@
   </div>
 </header>
 
+<div class="degraded" id="degraded" role="alert"></div>
+
 <section class="hero">
+  <div class="hero-fx" aria-hidden="true">
+    <u style="width:300px;height:300px;top:10%;inset-inline-end:14%;animation-delay:0s"></u>
+    <u style="width:380px;height:380px;top:46%;inset-inline-end:-4%;animation-delay:3s"></u>
+    <u style="width:240px;height:240px;top:26%;inset-inline-end:34%;animation-delay:6s"></u>
+    <i style="width:28px;height:28px;top:75%;inset-inline-end:51%;animation-duration:22.3s;animation-delay:13.7s;--dx:92vw;--dy:-33px;--rot:211deg"></i>
+    <i style="width:32px;height:32px;top:64%;inset-inline-end:15%;animation-duration:17.3s;animation-delay:4.9s;--dx:85vw;--dy:-70px;--rot:104deg"></i>
+    <i style="width:28px;height:28px;top:61%;inset-inline-end:12%;animation-duration:24.7s;animation-delay:13.3s;--dx:84vw;--dy:-65px;--rot:-182deg"></i>
+    <i style="width:20px;height:20px;top:34%;inset-inline-end:-5%;animation-duration:26.9s;animation-delay:5.2s;--dx:117vw;--dy:-30px;--rot:65deg"></i>
+    <i style="width:20px;height:20px;top:85%;inset-inline-end:29%;animation-duration:23.0s;animation-delay:10.6s;--dx:109vw;--dy:-9px;--rot:8deg"></i>
+    <i style="width:32px;height:32px;top:14%;inset-inline-end:24%;animation-duration:20.4s;animation-delay:3.7s;--dx:98vw;--dy:-73px;--rot:-165deg"></i>
+    <i style="width:32px;height:32px;top:17%;inset-inline-end:43%;animation-duration:17.5s;animation-delay:4.7s;--dx:84vw;--dy:-76px;--rot:233deg"></i>
+    <i style="width:38px;height:38px;top:4%;inset-inline-end:19%;animation-duration:18.9s;animation-delay:14.6s;--dx:110vw;--dy:16px;--rot:162deg"></i>
+    <i style="width:28px;height:28px;top:57%;inset-inline-end:1%;animation-duration:23.9s;animation-delay:3.2s;--dx:123vw;--dy:-11px;--rot:-28deg"></i>
+    <i style="width:16px;height:16px;top:43%;inset-inline-end:34%;animation-duration:16.2s;animation-delay:6.6s;--dx:139vw;--dy:-50px;--rot:-132deg"></i>
+    <i style="width:20px;height:20px;top:16%;inset-inline-end:-7%;animation-duration:16.8s;animation-delay:12.8s;--dx:91vw;--dy:-32px;--rot:29deg"></i>
+    <i style="width:32px;height:32px;top:28%;inset-inline-end:8%;animation-duration:21.9s;animation-delay:6.1s;--dx:105vw;--dy:27px;--rot:-92deg"></i>
+  </div>
   <div class="wrap hero-in">
     <span class="kicker"><span class="dot"></span>إعلانات من الناس · بدون عمولة</span>
     <h1>اللي مش محتاجه<br /><em>حد تاني محتاجه</em></h1>
@@ -511,7 +583,7 @@
 <section id="post" class="sec">
   <div class="wrap">
     <div class="sec-hd center">
-      <div><span class="lbl">اعرض</span><h2>حط إعلانك في دقيقتين</h2>
+      <div><span class="lbl">اعرض</span><h2 id="postTtl">حط إعلانك في دقيقتين</h2>
       <p>املا البيانات وشوف شكل إعلانك وهو بيتبني جنبك. أول ما تنشره هيظهر في المعروض فوراً.</p></div>
     </div>
     <div class="composer">
@@ -582,6 +654,7 @@
           </div>
         </div>
         <button class="btn btn-dark btn-lg btn-block" id="publish">انشر الإعلان</button>
+        <button class="btn btn-quiet btn-block" id="cancelEdit" style="display:none;margin-top:var(--s2)">إلغاء التعديل</button>
         <div class="done-note" id="doneNote"></div>
         <div id="ownList" style="margin-top:var(--s5)"></div>
       </div>
@@ -746,6 +819,7 @@
     pin:'<path d="M12 20.5s5.5-5 5.5-9.5a5.5 5.5 0 10-11 0c0 4.5 5.5 9.5 5.5 9.5z"/><circle cx="12" cy="10.8" r="2"/>',
     box:'<path d="M3.5 8L12 4l8.5 4v8L12 20l-8.5-4z"/><path d="M3.5 8l8.5 4 8.5-4M12 12v8"/>',
     trash:'<path d="M4.5 6.5h15M9.5 6.5v-2h5v2"/><path d="M6.5 6.5l.9 13h9.2l.9-13"/>',
+    pen:'<path d="M4 20h4l10-10a2.5 2.5 0 10-3.5-3.5L4.5 16.5 4 20z"/><path d="M13.5 7.5l3 3"/>',
     alert:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v4.5M12 15.5v.5"/>',
     check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>'
   };
@@ -928,6 +1002,7 @@
           return '<div class="own-row"><div class="own-th">'
             +(l.photos&&l.photos[0]?'<img src="'+l.photos[0]+'" alt="" />':'')+'</div>'
             +'<div><b>'+esc(l.title)+'</b><span>'+money(l.price)+' '+cur(l)+' · '+esc(l.city)+' · '+since(l.createdAt)+'</span></div>'
+            +'<button class="icon-btn" data-edit="'+l.id+'" aria-label="عدّل الإعلان" style="margin-inline-start:auto">'+ic('pen')+'</button>'
             +'<button class="icon-btn" data-del="'+l.id+'" aria-label="شيل الإعلان">'+ic('trash')+'</button></div>';
         }).join('')
       : '';
@@ -1054,7 +1129,8 @@
           +'<span class="who-n">'+esc(l.sellerName)+(l.mine?' — إعلانك':'')
             +(l.verified?' <span class="vbadge">'+ic('check')+'موثّق</span>':'')+'</span></div>'
         +(l.mine
-          ? '<button class="btn btn-quiet btn-lg btn-block" data-del="'+l.id+'">'+ic('trash','i-sm')+' شيل الإعلان</button>'
+          ? '<button class="btn btn-quiet btn-lg btn-block" data-edit="'+l.id+'">'+ic('pen','i-sm')+' عدّل الإعلان</button>'
+            +'<button class="btn btn-quiet btn-lg btn-block" data-del="'+l.id+'" style="margin-top:var(--s2)">'+ic('trash','i-sm')+' شيل الإعلان</button>'
           : '<button class="btn '+(inCart?'btn-done':'btn-dark')+' btn-lg btn-block" data-add="'+l.id+'"'+(inCart?' disabled':'')+'>'+(inCart?'في السلة':'أضف للسلة')+'</button>')
       +'</div></div>';
 
@@ -1074,9 +1150,13 @@
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&$('ovl').classList.contains('on')) closeSheet(); });
   $('sheet').addEventListener('click',function(e){
     var a=e.target.closest('[data-add]'); if(a){ addCart(a.getAttribute('data-add'),a); return; }
+    var ed=e.target.closest('[data-edit]');
+    if(ed){ startEdit(ed.getAttribute('data-edit')); closeSheet(); return; }
     var d=e.target.closest('[data-del]'); if(d){ delListing(d.getAttribute('data-del')); closeSheet(); }
   });
   $('ownList').addEventListener('click',function(e){
+    var ed=e.target.closest('[data-edit]');
+    if(ed){ startEdit(ed.getAttribute('data-edit')); return; }
     var d=e.target.closest('[data-del]'); if(d) delListing(d.getAttribute('data-del'));
   });
   function delListing(id){
@@ -1336,6 +1416,47 @@
     $(id).addEventListener('change',function(){ ok(id); drawTip(); drawPrev(); });
   });
 
+  /* ══ وضع التعديل ══ */
+  var editingId=null;
+
+  function startEdit(id){
+    var l=DB.byId?DB.byId(id):null;
+    if(!l){ l=DB.all().filter(function(x){return x.id===id;})[0]; }
+    if(!l) return;
+    editingId=id;
+    $('pTitle').value=l.title||'';
+    $('pCat').value=l.cat||'';
+    $('pCond').value=l.cond||'good';
+    $('pPrice').value=l.price||'';
+    $('pWas').value=l.was||'';
+    $('pCity').value=l.city||'';
+    $('pName').value=l.sellerName||'';
+    $('pPhone').value=l.sellerPhone||'';
+    $('pDesc').value=l.desc||'';
+    pics=(l.photos||[]).map(function(u){ return {preview:u, url:u, blob:null}; });
+    drawThumbs(); drawTip(); drawPrev();
+    $('publish').textContent='احفظ التعديل';
+    $('cancelEdit').style.display='';
+    $('postTtl').textContent='عدّل إعلانك';
+    $('doneNote').classList.remove('on');
+    document.getElementById('post').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function endEdit(){
+    editingId=null;
+    ['pTitle','pPrice','pWas','pDesc','pName','pPhone'].forEach(function(id){ $(id).value=''; });
+    $('pCat').value=''; $('pCond').value=''; $('pCity').value='';
+    pics.forEach(function(p){ if(p.preview&&p.preview.indexOf('blob:')===0) URL.revokeObjectURL(p.preview); });
+    pics=[];
+    drawThumbs(); drawPrev();
+    $('publish').textContent='انشر الإعلان';
+    $('cancelEdit').style.display='none';
+    $('postTtl').textContent='حط إعلانك في دقيقتين';
+    $('tip').classList.remove('on');
+  }
+
+  $('cancelEdit').addEventListener('click',endEdit);
+
   $('publish').addEventListener('click',function(){
     var btn=this, d=draft(), fine=true;
     if(d.title.length<8){ bad('pTitle','اكتب عنوان أوضح — ٨ حروف على الأقل'); fine=false; }
@@ -1365,27 +1486,40 @@
     });
 
     function publishNow(){
-    return T.uploadPhotos(pics.map(function(p){ return p.blob; }))
+    var isEdit = !!editingId;
+    /* الصور اللي اترفعت قبل كده عندها url — بنرفع الجديدة بس */
+    var fresh = pics.filter(function(p){ return p.blob; });
+    return T.uploadPhotos(fresh.map(function(p){ return p.blob; }))
       .then(function(urls){
-        btn.textContent='بننشر الإعلان...';
-        d.photos=urls;
-        return T.add(d);
+        btn.textContent = isEdit ? 'بنحفظ التعديل...' : 'بننشر الإعلان...';
+        var i=0;
+        d.photos = pics.map(function(p){ return p.url || urls[i++]; });
+        return isEdit ? T.update(editingId, d) : T.add(d);
       })
       .then(function(){
-        note.innerHTML=ic('check')+'<span><b>إعلانك اتنشر.</b> هتلاقيه في المعروض فوق'
-          +(T.mode==='local'?' — بس محفوظ على المتصفح ده بس لحد ما تربط Supabase.':'، وأي حد يفتح الموقع هيشوفه.')
-          +'</span>';
+        note.innerHTML = isEdit
+          ? ic('check')+'<span><b>التعديل اتحفظ.</b> الإعلان اتحدّث في المعروض.</span>'
+          : (T.mode==='local'
+            ? ic('alert')+'<span><b>الإعلان اتحفظ محلياً بس.</b> مفيش اتصال بالسيرفر، '
+              +'يعني الإعلان موجود على المتصفح ده بس ومحدش تاني هيشوفه.</span>'
+            : ic('check')+'<span><b>إعلانك اتنشر.</b> هتلاقيه في المعروض فوق، '
+              +'وأي حد يفتح الموقع هيشوفه.</span>');
         note.classList.add('on');
-        ['pTitle','pPrice','pWas','pDesc'].forEach(function(id){ $(id).value=''; });
-        pics.forEach(function(p){ if(p.preview&&p.preview.indexOf('blob:')===0) URL.revokeObjectURL(p.preview); });
-        pics=[]; drawThumbs(); drawPrev(); drawAll();
-        btn.disabled=false; btn.textContent='انشر إعلان تاني';
+        if(isEdit){ endEdit(); }
+        else {
+          ['pTitle','pPrice','pWas','pDesc'].forEach(function(id){ $(id).value=''; });
+          pics.forEach(function(p){ if(p.preview&&p.preview.indexOf('blob:')===0) URL.revokeObjectURL(p.preview); });
+          pics=[]; drawThumbs(); drawPrev();
+        }
+        drawAll();
+        btn.disabled=false;
+        btn.textContent = isEdit ? 'انشر الإعلان' : 'انشر إعلان تاني';
         setTimeout(function(){ $('browse').scrollIntoView({behavior:'smooth'}); },350);
       })
       .catch(function(err){
-        btn.disabled=false; btn.textContent='انشر الإعلان';
+        btn.disabled=false; btn.textContent=editingId?'احفظ التعديل':'انشر الإعلان';
         var m=String(err&&err.message||err);
-        note.innerHTML=ic('alert')+'<span><b>مقدرناش ننشر الإعلان.</b> '
+        note.innerHTML=ic('alert')+'<span><b>'+(editingId?'مقدرناش نحفظ التعديل.':'مقدرناش ننشر الإعلان.')+'</b> '
           +(m==='QUOTA'?'مساحة المتصفح اتملت.'
             :/توثّق|verified/i.test(m)?'لازم توثّق رقمك الأول.'
             :esc(m))+'</span>';
@@ -1404,7 +1538,14 @@
     drawAll();
     T.onChange(function(){ drawGrid(); drawMetrics(); drawRail(); });
     if(T.mode==='local'){
-      console.info('[تاني] شغال محلي — انسخ tani-config.example.js باسم tani-config.js وحط مفاتيحك عشان الإعلانات تتشارك بين الناس.');
+      var d=$('degraded');
+      d.innerHTML = T.degraded
+        ? '<b>الموقع شغال في وضع محلي.</b> مقدرناش نتصل بالسيرفر'
+          + (T.error?' ('+esc(T.error)+')':'')
+          + ' — أي إعلان تنشره دلوقتي هيتحفظ على المتصفح ده بس، ومحدش تاني هيشوفه.'
+        : '<b>وضع تجريبي.</b> Supabase مش متظبط — الإعلانات بتتحفظ على المتصفح ده بس.';
+      d.classList.add('on');
+      console.warn('[تاني] mode=local', T.error||'');
     }
     if(T.error) console.warn('[تاني] Supabase:', T.error);
   });

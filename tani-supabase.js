@@ -150,6 +150,37 @@
     },
 
     /* ── حذف إعلان ── */
+    /* ── تعديل إعلان ── */
+    update: function (id, draft) {
+      if (DB.mode === 'local') {
+        var local = rd('tani_listings', []);
+        for (var i = 0; i < local.length; i++) {
+          if (local[i].id === id) {
+            draft.id = id;
+            draft.createdAt = local[i].createdAt;
+            draft.mine = true;
+            local[i] = draft;
+            break;
+          }
+        }
+        if (!wr('tani_listings', local)) return Promise.reject(new Error('QUOTA'));
+        DB.listings = local;
+        return Promise.resolve(draft);
+      }
+      var row = toRow(draft, DB.userId);
+      delete row.seller_id;   /* المالك مايتغيرش */
+      /* .select() بيرجّع الصفوف اللي اتعدّلت فعلاً — من غيرها RLS
+         بترفض بصمت وإحنا نفتكر إن التعديل نجح */
+      return sb.from('listings').update(row).eq('id', id).select()
+        .then(function (res) {
+          if (res.error) throw new Error(DB.auth._say(res.error.message));
+          if (!res.data || !res.data.length) {
+            throw new Error('مقدرناش نعدّل الإعلان — ده مسموح لصاحبه بس.');
+          }
+          return DB.refresh();
+        });
+    },
+
     remove: function (id) {
       if (DB.mode === 'local') {
         var local = rd('tani_listings', []).filter(function (l) { return l.id !== id; });
@@ -303,7 +334,10 @@
     confirm: function (code) {
       if (!pending) return Promise.reject(new Error('ابعت الكود الأول'));
       if (DB.mode === 'local') {
+        /* وضع تجريبي فقط: مفيش تحقق حقيقي. بنعلّم عليه عشان
+           الواجهة تقدر تحذّر المستخدم إن الإعلان محلي. */
         DB.auth.verified = true;
+        DB.auth.demoVerified = true;
         DB.auth.contact = pending.value;
         return Promise.resolve({ demo: true });
       }
@@ -346,15 +380,24 @@
       .then(function (session) {
         var u = session && session.user;
         DB.userId = u ? u.id : null;
-        DB.auth.verified = !!(u && ((u.phone && u.phone_confirmed_at) || (u.email && u.email_confirmed_at)));
-        DB.auth.contact  = u ? (u.phone || u.email) : null;
-        return DB.refresh();
+        /* الجلسة المخزّنة ممكن تكون لقطة قديمة (الـ JWT اتعمل قبل
+           التوثيق)، فبنسأل السيرفر عن الحالة الحقيقية بدل ما
+           نعتمد عليها — ده بيمنع تضارب بين الواجهة والتريجر. */
+        return sb.auth.getUser().then(function (r) {
+          var fresh = (r && r.data && r.data.user) || u;
+          DB.userId = fresh ? fresh.id : DB.userId;
+          DB.auth.verified = !!(fresh && ((fresh.phone && fresh.phone_confirmed_at)
+                                       || (fresh.email && fresh.email_confirmed_at)));
+          DB.auth.contact = fresh ? (fresh.phone || fresh.email) : null;
+          return DB.refresh();
+        });
       })
       .then(function () { return DB; })
       .catch(function (err) {
         /* لو Supabase وقع، كمّل محلي بدل ما الموقع يقف */
         DB.error = err.message;
         DB.mode = 'local';
+        DB.degraded = true;   /* وقعنا على المحلي بسبب خطأ، مش باختيار */
         return DB.refresh().then(function () { return DB; });
       });
   })();
